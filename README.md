@@ -30,10 +30,10 @@ Begin by installing all the essential dependencies.
 Scripts provided (should be executed in order):
 
 - `npm run trees` - fetch all raw tree data from [Trees.SG](http://trees.sg) (NOT included in this repository) and generate `grid-*.json` files in the `data` folder.
-- `npm run chunk` - read all the raw data and generate a cleaner `trees-everything.geojson`.
+- `npm run chunk` - read all the raw data and generate a cleaner `trees-everything.geojson`  (NOT included in this repository).
 - `npm run family` - fetch family categories for the trees.
-- `npm run pre-tiles` - generate the needed `GeoJSON` files before converting to `MBTiles`.
-- `npm run tiles` - generate the ultimate final `trees.mbtiles` file, to be uploaded on Mapbox.
+- `npm run pre-tiles` - generate the needed `GeoJSON` files before converting to `MBTiles`  (NOT included in this repository).
+- `npm run tiles` - generate the ultimate final `trees.mbtiles` file  (NOT included in this repository), to be uploaded on [Mapbox Studio](https://www.mapbox.com/mapbox-studio/) as a [tileset](https://www.mapbox.com/help/define-tileset/).
 - `npm start` - start a local server for the site.
 
 Copyright & license
