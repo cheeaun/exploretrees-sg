@@ -44,7 +44,7 @@ Copyright & license
 - SVG icons from [Font Awesome](https://fontawesome.com/license)
 - Code licensed under [MIT](https://cheeaun.mit-license.org/)
 
-Similar visualizations
+Similar visualizations/effort
 ---
 
 - [New York City Street Trees by Species](http://jillhubley.com/blog/nyctrees)
@@ -52,3 +52,8 @@ Similar visualizations
 - [An Interactive Visualization of NYC Street Trees](https://www.cloudred.com/labprojects/nyctrees/)
 - [New York City Street Trees](https://belindakanpetch.shinyapps.io/StreetTrees/)
 - [Atlanta's Tree Canopy Data Visualization](http://www.beckyscheel.com/atl-tree-dataviz/)
+- [Trees of Madison](http://acouch.github.io/madison-trees/)
+- [Melbourne Urban Forest Visual](http://melbourneurbanforestvisual.com.au/)
+- [OpenTrees.org](http://www.opentrees.org/)
+- [San Francisco Urban Forest Map](https://urbanforestmap.org/)
+- [OpenTreeMap](https://www.opentreemap.org/)
