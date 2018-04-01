@@ -370,7 +370,7 @@ body.modal #card{
   }
 }
 
-@media (min-width: 800px) and (min-height: 800px) {
+@media (min-width: 768px) and (min-height: 600px) {
   #layers-button,
   #modal,
   #layers .close {
