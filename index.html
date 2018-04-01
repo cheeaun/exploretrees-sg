@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<title>Explore Trees in Singapore</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<meta name="description" content="Explore trees in Singapore">
+<link rel="stylesheet" href="https://api.tiles.mapbox.com/mapbox-gl-js/v0.44.1/mapbox-gl.css">
+<link rel="stylesheet" href="app.css">
+<div id="map"></div>
+<div id="modal"></div>
+<button id="layers-button">
+  <svg viewBox="0 0 576 512" width="24" height="24">
+    <path d="M508.505 36.17L381.517 92.576 207.179 34.463a47.992 47.992 0 0 0-34.674 1.674l-144 64A48 48 0 0 0 0 144v287.967c0 34.938 35.991 57.864 67.495 43.863l126.988-56.406 174.339 58.113a47.992 47.992 0 0 0 34.674-1.674l144-64A48 48 0 0 0 576 368V80.033c0-34.938-35.991-57.864-67.495-43.863zM360 424l-144-48V88l144 48v288zm-312 8V144l120-53.333v288L48 432zm480-64l-120 53.333v-288L528 80v288z"/>
+  </svg>
+</button>
+<div id="layers" hidden>
+  <div class="flex">
+    <h1>Explore Trees in Singapore <button class="close">×</button></h1>
+    <ul class="pills">
+      <li><a href="#type">Type</a></li>
+      <li><a href="#girth">Girth</a></li>
+      <li><a href="#age">Age</a></li>
+      <li><a href="#family">Family</a></li>
+    </ul>
+    <div class="legend type">
+      <span class="circle" style="background-color: limegreen"></span> Tree 🌱<br>
+      <span class="circle" style="background-color: orangered"></span> Flowering 🌸<br>
+      <span class="circle" style="background-color: aqua"></span> Heritage 🌳 (<a href="https://www.nparks.gov.sg/gardens-parks-and-nature/heritage-trees" target="_blank">?</a>)<br>
+      <span class="circle" style="background-color: magenta"></span> Flowering + Heritage
+    </div>
+    <div class="legend girth">
+      <div class="gradient" style="background: linear-gradient(to right, yellow, green 33.33%, orangered 100%)"></div>
+      <div class="label-left">0</div> <div class="label-right">&gt; 15 meters</div>
+      <p class="info"><a href="https://en.wikipedia.org/wiki/Tree_girth_measurement" target="_blank">Wikipedia</a>: Girth is a measurement of the distance around the trunk of a tree measured perpendicular to the axis of the trunk</p>
+    </div>
+    <div class="legend age">
+      <div class="gradient" style="background: linear-gradient(to right, yellow, orange 10%, lime 20%, orangered 30%, magenta 100%)"></div>
+      <div class="label-left">0</div> <div class="label-right">&gt; 100 years</div>
+    </div>
+    <div class="legend family scrollable" id="legend-family"></div>
+    <div class="attribution">
+      Data from <a href="http://trees.sg" target="_blank">Trees.SG</a> <a href="https://www.nparks.gov.sg/" target="_blank">&copy; National Parks Board</a>
+      <br>
+      <a href="https://www.mapbox.com/about/maps/" target="_blank">&copy; Mapbox</a>
+      <a href="http://www.openstreetmap.org/about/" target="_blank">&copy; OpenStreetMap</a>
+    </div>
+  </div>
+</div>
+<div id="card" hidden></div>
+<script src="https://cdn.polyfill.io/v2/polyfill.js?features=fetch,Element.prototype.classList"></script>
+<script src="https://api.tiles.mapbox.com/mapbox-gl-js/v0.44.1/mapbox-gl.js"></script>
+<script src="app.js"></script>

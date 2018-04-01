@@ -1,0 +1,4 @@
+node_modules
+data/grid*.json
+data/trees*.geojson
+*.mbtiles

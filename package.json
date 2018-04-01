@@ -1,0 +1,33 @@
+{
+  "name": "exploretrees-sg",
+  "version": "1.0.0",
+  "description": "Explore trees in Singapore",
+  "scripts": {
+    "trees": "node scripts/fetch-trees",
+    "chunk": "node --max-old-space-size=4096 scripts/chunk-trees",
+    "pre-tiles": "node --max-old-space-size=4096 scripts/pre-tiles",
+    "tiles-important": "tippecanoe -f -r1 -l trees -o data/trees-important.mbtiles data/trees-important.geojson",
+    "tiles-other": "tippecanoe -f -r2 -Bg -as -ae -l trees -o data/trees-other.mbtiles data/trees-other.geojson",
+    "tiles-join": "tile-join -f -o data/trees.mbtiles data/trees-other.mbtiles data/trees-important.mbtiles",
+    "tiles": "npm run tiles-important && npm run tiles-other && npm run tiles-join",
+    "family": "node scripts/fetch-families",
+    "start": "serve"
+  },
+  "keywords": [
+    "explore",
+    "tree",
+    "trees",
+    "singapore",
+    "fauna",
+    "flowering",
+    "heritage"
+  ],
+  "author": "Lim Chee Aun",
+  "license": "MIT",
+  "devDependencies": {
+    "@turf/turf": "^5.1.6",
+    "got": "^8.3.0",
+    "p-queue": "^2.3.1",
+    "serve": "^6.5.3"
+  }
+}
