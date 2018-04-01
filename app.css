@@ -104,6 +104,12 @@ body.modal #map {
   line-height: 0;
   transition: .3s transform ease-in-out;
 }
+@supports (left: max(0px)) {
+  #layers-button {
+    right: max(8px, const(safe-area-inset-right));
+    right: max(8px, env(safe-area-inset-right));
+  }
+}
 #layers-button:hover {
   background-color: rgba(0,0,0,.9);
   transform: rotate(30deg);
@@ -349,6 +355,14 @@ body.modal #card{
     max-width: 400px;
     border-radius: 18px;
   }
+  @supports (left: max(0px)) {
+    #card {
+      right: max(8px, const(safe-area-inset-right));
+      right: max(8px, env(safe-area-inset-right));
+      bottom: max(8px, const(safe-area-inset-bottom));
+      bottom: max(8px, env(safe-area-inset-bottom));
+    }
+  }
   #card.focus {
     border: 3px solid dodgerblue;
     height: auto;
@@ -356,7 +370,7 @@ body.modal #card{
   }
 }
 
-@media (min-width: 800px) {
+@media (min-width: 800px) and (min-height: 800px) {
   #layers-button,
   #modal,
   #layers .close {
@@ -369,6 +383,14 @@ body.modal #card{
     border-radius: 18px;
     max-width: 320px;
     overflow-x: auto;
+  }
+  @supports (left: max(0px)) {
+    #layers {
+      top: max(8px, const(safe-area-inset-top));
+      top: max(8px, env(safe-area-inset-top));
+      left: max(8px, const(safe-area-inset-left));
+      left: max(8px, env(safe-area-inset-leftt));
+    }
   }
   #layers .flex {
     height: auto;
