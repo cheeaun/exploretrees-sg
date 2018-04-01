@@ -227,16 +227,18 @@ body.modal #map {
   text-align: right;
 }
 #layers .attribution {
-  opacity: .8;
+  color: slategray;
   padding-top: 5px;
   font-size: .8em;
 }
 #layers .attribution a {
+  color: rgba(255,255,255,.7);
   display: inline-block;
   text-decoration: none;
+  border-bottom: 1px solid rgba(255,255,255,.3);
 }
 #layers .attribution a:hover {
-  text-decoration: underline;
+  border-color: rgba(255,255,255,.7);
 }
 
 #card {
