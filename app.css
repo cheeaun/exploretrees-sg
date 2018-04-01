@@ -372,7 +372,7 @@ body.modal #card{
     height: auto;
   }
   #layers .legend.scrollable {
-    transition: .3s max-height ease-in-out;
+    transition: max-height .3s .3s ease-in;
     min-height: 5em;
     max-height: 25vh;
   }
