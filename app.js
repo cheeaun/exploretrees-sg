@@ -208,8 +208,12 @@ map.on('load', function(){
       visibility: 'none',
     },
     paint: {
-      'circle-color': 'rgba(0, 191, 255, .25)', // deepskyblue, .25 opacity
-      'circle-stroke-width': 1,
+      'circle-color': [
+        'interpolate', ['linear'], ['zoom'],
+        0, 'rgba(255, 255, 255, .5)',
+        20, 'rgba(255, 255, 255, .1)'
+      ],
+      'circle-stroke-width': 3,
       'circle-stroke-color': 'dodgerblue',
       'circle-radius': [
         'interpolate', ['linear'], ['zoom'],
@@ -273,7 +277,7 @@ map.on('load', function(){
         },
       });
       map.setLayoutProperty('tree-focus', 'visibility', 'visible');
-      map.setPaintProperty('tree-focus', 'circle-stroke-width', showOneTree ? 3 : 1);
+      map.setPaintProperty('tree-focus', 'circle-opacity', showOneTree ? 1 : .75);
 
       requestAnimationFrame(function(){
         var center = coordinates.slice().reverse();
@@ -323,7 +327,7 @@ map.on('load', function(){
 
     function hideTreeFocusMarker(){
       map.setLayoutProperty('tree-focus', 'visibility', 'none');
-      map.setPaintProperty('tree-focus', 'circle-stroke-width', 1);
+      map.setPaintProperty('tree-focus', 'circle-opacity', .75);
     }
 
     function hideTree(){
