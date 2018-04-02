@@ -175,6 +175,7 @@ body.modal #map {
   margin: auto;
   max-width: 400px;
   height: 50vh;
+  min-height: 300px;
   display: flex;
   flex-direction: column;
 }
@@ -391,6 +392,23 @@ body.modal #card{
   margin-right: .6em;
 }
 
+@media (orientation: landscape) {
+  #layers {
+    top: 0;
+    height: 100vh;
+    max-width: 320px;
+  }
+  #layers[hidden] {
+    transform: translateX(-100%);
+  }
+  #layers .flex {
+    height: 100%;
+  }
+  body.modal #map {
+    transform: translateY(0);
+  }
+}
+
 @media (min-width: 416px) { /* 400 + 8 + 8 */
   #card {
     right: 8px;
@@ -422,10 +440,14 @@ body.modal #card{
   #layers {
     top: 8px;
     left: 8px;
+    height: auto;
     bottom: auto;
     border-radius: 18px;
     max-width: 320px;
     overflow-x: auto;
+  }
+  #layers .flex {
+    min-height: 0;
   }
   @supports (left: max(0px)) {
     #layers {
