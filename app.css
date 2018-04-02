@@ -147,6 +147,10 @@ body.modal #map {
   text-shadow: 0 2px #000;
   animation: poof 1s 5s ease-in both;
 }
+@-webkit-keyframes poof {
+  50% { opacity: .1; }
+  100% { opacity: 0; transform: translateX(10%); }
+}
 @keyframes poof {
   50% { opacity: .1; }
   100% { opacity: 0; transform: translateX(10%); }
