@@ -102,8 +102,6 @@ body.modal #map {
   color: #fff;
   border-radius: 123123px;
   line-height: 0;
-  transition: .3s transform ease-in-out;
-  animation: wiggle 1s 3s ease-in-out;
 }
 @supports (left: max(0px)) {
   #layers-button {
@@ -113,7 +111,22 @@ body.modal #map {
 }
 #layers-button:hover {
   background-color: rgba(0,0,0,.9);
+}
+#layers-button svg {
+  transition: .3s transform ease-in-out;
+}
+#layers-button:hover svg {
   transform: rotate(30deg);
+}
+#layers-button svg {
+  animation: wiggle 1s 5s ease-in-out;
+}
+@-webkit-keyframes wiggle {
+  0% { transform: rotate(0) }
+  25% { transform: rotate(-25deg) }
+  50% { transform: rotate(25deg) }
+  75% { transform: rotate(-25deg) }
+  100% { transform: rotate(0) }
 }
 @keyframes wiggle {
   0% { transform: rotate(0) }
@@ -121,6 +134,22 @@ body.modal #map {
   50% { transform: rotate(25deg) }
   75% { transform: rotate(-25deg) }
   100% { transform: rotate(0) }
+}
+#layers-button:before {
+  content: attr(title);
+  font-weight: bold;
+  font-size: 1.1em;
+  position: absolute;
+  top: 25px;
+  left: -10px;
+  white-space: nowrap;
+  transform: translateX(-100%);
+  text-shadow: 0 2px #000;
+  animation: poof 1s 5s ease-in both;
+}
+@keyframes poof {
+  50% { opacity: .1; }
+  100% { opacity: 0; transform: translateX(10%); }
 }
 
 #layers {
