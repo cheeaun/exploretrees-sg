@@ -416,9 +416,4 @@ map.on('load', function(){
     });
 
   });
-
-  // Fix iOS 11.3's passive events bug
-  map.getContainer().addEventListener('touchmove', function(e){
-    e.preventDefault();
-  }, false);
 });
