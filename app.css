@@ -87,6 +87,10 @@ body.modal #map {
   transform: translateY(-15%);
 }
 
+.mapboxgl-ctrl-top-right {
+  top: 55px;
+}
+
 #layers-button {
   outline: 0;
   border: 0;
@@ -432,6 +436,9 @@ body.modal #card{
 }
 
 @media (min-width: 768px) and (min-height: 600px) {
+  .mapboxgl-ctrl-top-right {
+    top: 0;
+  }
   #layers-button,
   #modal,
   #layers .close {

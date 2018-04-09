@@ -36,6 +36,12 @@ var map = new mapboxgl.Map({
   attributionControl: false, // Attribution is inside Layers modal
 });
 map.touchZoomRotate.disableRotation();
+map.addControl(new mapboxgl.GeolocateControl({
+  positionOptions: {
+    enableHighAccuracy: true,
+  },
+  trackUserLocation: true,
+}));
 
 var maxBoundsLike = [
   [ 103.6016626883025, 1.233357600011331 ], // sw
