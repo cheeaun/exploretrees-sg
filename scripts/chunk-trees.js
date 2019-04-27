@@ -1,5 +1,42 @@
 const fs = require('fs');
 const turf = require('@turf/turf');
+const { circle: turfCircle, point } = turf;
+
+const girthSize = (girth) => {
+  switch (girth) {
+    case '0.0 - 0.5': return 'XS';
+    case '0.6 - 1.0': return 'S';
+    case '1.1 - 1.5': return 'M';
+    case '> 1.5': return 'L';
+    default: return null;
+  }
+};
+
+// Merge Tree t2 to Tree t1
+const treeMerge = (t1, t2) => {
+  // Prioritize heritage and flowering ones
+  if (t2.heritage || t2.flowering) {
+    t1.id = t2.id;
+    t1.tree_id = t2.tree_id;
+    t1.species_id = t2.species_id;
+    if (t2.girth) {
+      t1.girth = t2.girth;
+      t1.girth_size = t2.girth_size;
+    }
+  }
+  // Prioritize taller ones
+  if (t2.height_est && t2.height_est > t1.height_est) {
+    t1.height_est = t2.height_est;
+    t1.height = t2.height;
+  }
+  // Prioritize older ones
+  if (t2.age && t2.age > t1.age) {
+    t1.age = t2.age;
+  }
+  t1.flowering = t2.flowering || t1.flowering;
+  t1.heritage = t2.heritage || t1.heritage;
+  return t1;
+};
 
 const trees = {};
 fs.readdir('data', (e, files) => {
@@ -23,7 +60,8 @@ fs.readdir('data', (e, files) => {
   };
   const features = [];
   const treeIDs = {};
-  const { circle: turfCircle, point } = turf;
+  const treeCoords = {};
+
   for (id in trees){
     const {
       geometry,
@@ -31,8 +69,7 @@ fs.readdir('data', (e, files) => {
     } = trees[id];
     const center = geometry.coordinates;
     const {
-      ID: tree_id,
-      GRTH_SIZE,
+      Girth,
       HEIGHT: height,
       SPCS_CD: species_id,
       SPSC_NM,
@@ -41,9 +78,10 @@ fs.readdir('data', (e, files) => {
       Type,
       ACTUAL_TREE_TYPE,
       FLOWERING,
+      Public_treeid: tree_id,
     } = properties;
 
-    console.log(`${++index}/${total}\tTree ID: ${id}`);
+    // console.log(`${++index}/${total}\tTree ID: ${id}`);
 
     const type = (Type || '').toLowerCase();
     const heritage = type === 'heritage' || (ACTUAL_TREE_TYPE || '').toLowerCase() === 'heritage';
@@ -51,45 +89,48 @@ fs.readdir('data', (e, files) => {
     if (heritage) count.heritage++;
     if (flowering) count.flowering++;
 
-    // Get radius from girth, in meters
-    // If `null`, assume 0.01 girth
-    // const radius = parseFloat((GRTH_SIZE || 0.01)/(Math.PI*2).toFixed(3), 10);
-
     // if height is `null`, assume 1
-    const height_est = parseInt(((height || '1').match(/(\d+)[^\d]*$/) || [,0])[1], 10);
-    const girth = GRTH_SIZE && parseFloat(GRTH_SIZE.toFixed(3), 10);
-    const age = parseInt(AGE, 10);
+    const height_est = parseInt(((height || '0').match(/(\d+)[^\d]*$/) || [,0])[1], 10);
+    const girth_size = girthSize(Girth);
+    const age = AGE ? parseInt(AGE, 10) : null;
 
-    let originalPt = treeIDs[tree_id + ' – ht'] || treeIDs[tree_id.replace(/\s*[^\s]\s*ht\s*$/i, '')];
-    if (originalPt){
-      // Remove ` - HT`
-      originalPt.properties.tree_id = originalPt.properties.tree_id.replace(/\s*[^\s]\s*ht\s*$/i, '');
-      originalPt.properties.girth = originalPt.properties.girth || girth;
-      originalPt.properties.height = originalPt.properties.height || height;
-      originalPt.properties.age = originalPt.properties.age || age;
-      originalPt.properties.heritage = true;
+    let tree = {
+      id,
+      tree_id,
+      species_id,
+      girth: Girth,
+      girth_size,
+      height,
+      height_est,
+      age,
+      flowering,
+      heritage,
+    };
+
+    if (treeIDs[tree_id]) {
+      console.warn(`🐑  Tree ${tree_id} already exists.`);
+      tree = treeMerge(treeIDs[tree_id], tree);
+      continue;
     } else {
-      const pt = point(center, {
-        id,
-        tree_id,
-        species_id,
-        girth,
-        // radius,
-        height,
-        height_est,
-        age,
-        flowering,
-        heritage,
-      });
-      features.push(pt);
-      treeIDs[tree_id.toLowerCase()] = pt;
+      treeIDs[tree_id] = tree;
+    }
 
-      if (!speciesMap[species_id]){
-        speciesMap[species_id] = {
-          name: SPSC_NM,
-          common_name: COMMON_NM,
-        };
-      }
+    const centerStr = center.toString();
+    if (treeCoords[centerStr]) {
+      console.warn(`📍  Tree ${tree_id} already exists with EXACT SAME location.`);
+      tree = treeMerge(treeCoords[centerStr], tree);
+      continue;
+    } else {
+      treeCoords[centerStr] = tree;
+    }
+
+    features.push(point(center, tree));
+
+    if (!speciesMap[species_id] && species_id){
+      speciesMap[species_id] = {
+        name: SPSC_NM,
+        common_name: COMMON_NM,
+      };
     }
 
     /*
@@ -115,10 +156,10 @@ fs.readdir('data', (e, files) => {
 
   const collection = turf.featureCollection(features);
   const filePath = `data/trees-everything.geojson`;
-  fs.writeFileSync(filePath, JSON.stringify(collection));
+  fs.writeFileSync(filePath, JSON.stringify(collection, null, '\t'));
   console.log(`GeoJSON file written: ${filePath}`);
 
-  fs.writeFileSync('data/species.json', JSON.stringify(speciesMap));
+  fs.writeFileSync('data/species.json', JSON.stringify(speciesMap, null, '\t'));
   console.log(`Species count: ${Object.keys(speciesMap).length}`);
 
   console.log(JSON.stringify(count));

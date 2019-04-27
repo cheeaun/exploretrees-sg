@@ -9,6 +9,7 @@ let count = 0;
 
 data.features.forEach(f => {
   const { flowering, heritage, species_id } = f.properties;
+  f.properties.position = f.geometry.coordinates.toString();
   // Family
   f.properties.family = speciesInfo[species_id] && speciesInfo[species_id].Family || null;
   // Split important trees from the others
