@@ -15,7 +15,7 @@ import circle from '@turf/circle';
 import throttle from 'just-throttle';
 import { html, render } from 'lit-html';
 
-import treesDataPath from './data/trees.min.mp';
+import treesDataPath from './data/trees.min.mp.ico';
 import speciesData from './data/species.json';
 import familiesSpeciesData from './data/families-species.json';
 import poisData from './data/pois.json';

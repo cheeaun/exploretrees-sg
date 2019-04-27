@@ -19,7 +19,7 @@ fs.writeFileSync(filePath, JSON.stringify(finalData));
 console.log(`JSON file written: ${filePath}`);
 
 const mpData = msgpack.serialize(finalData);
-const mpFilePath = 'data/trees.min.mp';
+const mpFilePath = 'data/trees.min.mp.ico';
 fs.writeFileSync(mpFilePath, mpData);
 console.log(`MessagePack file written: ${mpFilePath}`);
 
