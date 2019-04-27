@@ -11,5 +11,5 @@ action "Deploy to GitHub Pages" {
     FOLDER = "dist"
     CNAME = "exploretrees.sg"
   }
-  secrets = ["GITHUB_TOKEN"]
+  secrets = ["ACCESS_TOKEN"]
 }
