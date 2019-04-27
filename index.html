@@ -1,9 +1,11 @@
 <!DOCTYPE html>
-<title>ExploreTrees.SG - 🌳 Explore Trees in Singapore 🇸🇬</title>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
-<meta name="description" content="Explore trees in Singapore">
+<title>ExploreTrees.SG - 🌳 Explore Trees in Singapore 🇸🇬</title>
+<link rel="stylesheet" href="app.css">
+<link id="dummy-fetch" as="fetch" href="./data/trees.min.mp" crossorigin>
 <!-- metacrap: https://adactio.com/journal/9881 -->
+<meta name="description" content="Explore trees in Singapore">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:site" content="ExploreTrees.SG">
 <meta name="twitter:url" property="og:url" content="https://exploretrees.sg">
@@ -11,8 +13,6 @@
 <meta name="twitter:description" property="og:description" content="Explore trees in Singapore">
 <meta name="twitter:image" property="og:image" content="https://exploretrees.sg/screenshots/preview.png">
 <!-- end metacrap -->
-<link rel="stylesheet" href="https://api.tiles.mapbox.com/mapbox-gl-js/v0.52.0/mapbox-gl.css">
-<link rel="stylesheet" href="app.css">
 <div id="map"></div>
 <div id="modal"></div>
 <button id="layers-button" title="Explore Trees in Singapore">
@@ -30,14 +30,32 @@
       <li><a href="#family">Family</a></li>
     </ul>
     <div class="legend type">
-      <span class="circle" style="background-color: limegreen"></span> Tree 🌱<br>
-      <span class="circle" style="background-color: orangered"></span> Flowering 🌸<br>
-      <span class="circle" style="background-color: aqua"></span> Heritage 🌳 (<a href="https://www.nparks.gov.sg/gardens-parks-and-nature/heritage-trees" target="_blank">?</a>)<br>
-      <span class="circle" style="background-color: magenta"></span> Flowering + Heritage
+      <table>
+        <tr>
+          <td width="16"><span class="circle" style="background-color: limegreen"></span></td>
+          <td>Tree 🌱</td>
+          <td class="right"><b id="total-trees"></b></td>
+        </tr>
+        <tr>
+          <td width="16"><span class="circle" style="background-color: orangered"></span></td>
+          <td>Flowering 🌸</td>
+          <td class="right"><b id="total-flowering"></b></td>
+        </tr>
+        <tr>
+          <td width="16"><span class="circle" style="background-color: aqua"></span></td>
+          <td>Heritage 🌳
+            <a href="https://www.nparks.gov.sg/gardens-parks-and-nature/heritage-trees" target="_blank" class="badge">?</a></td>
+          <td class="right"><b id="total-heritage"></b></td>
+        </tr>
+        <tr>
+          <td width="16"><span class="circle" style="background-color: magenta"></span></td>
+          <td colspan="2">Flowering + Heritage</td>
+        </tr>
+      </table>
     </div>
     <div class="legend girth">
-      <div class="gradient" style="background: linear-gradient(to right, yellow, green 33.33%, orangered 100%)"></div>
-      <div class="label-left">0</div> <div class="label-right">&gt; 15 meters</div>
+      <div class="gradient" style="background: linear-gradient(to right, yellow, green, orangered 100%)"></div>
+      <div class="label-left">0</div> <div class="label-right">&gt; 1.5 meters</div>
       <p class="info"><a href="https://en.wikipedia.org/wiki/Tree_girth_measurement" target="_blank">Wikipedia</a>: Girth is a measurement of the distance around the trunk of a tree measured perpendicular to the axis of the trunk.</p>
     </div>
     <div class="legend age">
@@ -45,20 +63,52 @@
       <div class="label-left">0</div> <div class="label-right">&gt; 100 years</div>
     </div>
     <div class="legend family scrollable" id="legend-family"></div>
+    <div class="global-legend">
+      <span><img src="./assets/park-icon.png" id="park-icon" width="24" height="24" alt=""> Park</span>
+      <span><img src="./assets/hroad-icon.png" id="hroad-icon" width="24" height="24" alt=""> Heritage Road</span>
+      <span><img src="./assets/srgreenery-icon.png" id="srgreenery-icon" width="24" height="24" alt=""> Skyrise Greenery</span>
+      <span><img src="./assets/garden-icon.png" id="garden-icon" width="24" height="24" alt=""> Community Garden</span>
+    </div>
     <div class="attribution">
       Visualized by <a href="https://twitter.com/cheeaun">@cheeaun</a>. Available on <a href="https://github.com/cheeaun/exploretrees-sg" target="_blank">GitHub</a>.
       <br>
       Data from <a href="http://trees.sg" target="_blank">Trees.SG</a> <a href="https://www.nparks.gov.sg/" target="_blank">&copy; National Parks Board</a>.
       <br>
       <a href="https://www.mapbox.com/about/maps/" target="_blank">&copy; Mapbox</a>
-      <a href="http://www.openstreetmap.org/about/" target="_blank">&copy; OpenStreetMap</a>
+      <a href="https://www.maptiler.com/copyright/" target="_blank">&copy; MapTiler</a>
+      <a href="https://www.openstreetmap.org/copyright" target="_blank">&copy; OpenStreetMap contributors</a>
+    </div>
+    <div id="rendering-mode" hidden>
+      Rendering in low-quality mode. <a href="/?#hq" onclick="return confirm('Be warned that high-quality mode uses more data and computing resources that might crash your browser. Proceed?')">Try high-quality mode?</a>
     </div>
   </div>
 </div>
 <div id="card" hidden></div>
-<script src="https://cdn.polyfill.io/v2/polyfill.js?features=fetch,Element.prototype.classList"></script>
-<script src="https://api.tiles.mapbox.com/mapbox-gl-js/v0.52.0/mapbox-gl.js"></script>
+<img id="leaves" src="./assets/leaves.png" alt="" hidden>
+<script src="https://api.tiles.mapbox.com/mapbox-gl-js/v0.54.0/mapbox-gl.js"></script>
 <script src="app.js"></script>
+<script>
+const supportsFetch = 'fetch' in window;
+const supportsWebGL = 'WebGLRenderingContext' in window;
+const supportsClassList = 'classList' in document.documentElement;
+if (!supportsFetch || !supportsWebGL || !supportsClassList){
+  alert("Sorry, this web site doesn't work on your web browser. Please use a newer modern browser.");
+}
+
+const _isTouch = 'ontouchstart' in window || navigator.msMaxTouchPoints;
+const _smallScreen = screen.width <= 600 || screen.height <= 600;
+const _hqHash = /#hq/.test(location.hash);
+const _renderingMode = !_hqHash && (_isTouch && _smallScreen) ? 'low' : 'high';
+if (_renderingMode === 'high') {
+  document.getElementById('dummy-fetch').rel = 'preload';
+}
+
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./sw.js');
+  });
+}
+</script>
 <!-- Global site tag (gtag.js) - Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=UA-23235796-9"></script>
 <script>

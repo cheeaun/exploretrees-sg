@@ -1,3 +1,5 @@
+@import 'https://api.tiles.mapbox.com/mapbox-gl-js/v0.54.0/mapbox-gl.css';
+
 * {
   box-sizing: border-box;
 }
@@ -5,7 +7,8 @@ html, body {
   overflow: hidden;
   margin: 0;
   padding: 0;
-  background-color: #343332;
+  background-color: #0C0C0C;
+  text-size-adjust: none;
 }
 body, input, button, select, textarea {
   font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Oxygen-Sans,Ubuntu,Cantarell,"Helvetica Neue",sans-serif;
@@ -19,11 +22,28 @@ svg {
   display: inline-block;
 }
 
+.badge {
+  display: inline-block;
+  text-align: center;
+  width: 16px;
+  height: 16px;
+  line-height: 16px;
+  font-size: 12px;
+  background-color: rgba(255,255,255,.25);
+  border-radius: 123123px;
+  text-decoration: none;
+  font-weight: bold;
+  vertical-align: middle;
+}
+
 .circle {
   display: inline-block;
-  width: 8px;
-  height: 8px;
+  width: 14px;
+  height: 14px;
   border-radius: 123123px;
+  border: 3px solid rgba(0,0,0,.6);
+  vertical-align: middle;
+  transition: .3s background-color;
 }
 
 .close {
@@ -36,7 +56,7 @@ svg {
   border-radius: 123123px;
   text-align: center;
   color: #fff;
-  background-color: rgba(255,255,255,.1);
+  background-color: rgba(255,255,255,.3);
   font-weight: bold;
   font-size: 14px;
   line-height: 0;
@@ -70,25 +90,105 @@ body.modal #modal {
   pointer-events: auto;
 }
 
-.mapboxgl-canvas-container.mapboxgl-interactive {
-  cursor: default;
-}
-.mapboxgl-canvas-container.mapboxgl-interactive:active {
-  cursor: move;
-}
 #map {
   position: absolute;
   top: 0;
   bottom: 0;
   width: 100%;
   transition: .3s all ease-in-out;
+  pointer-events: none;
+}
+#map.loaded {
+  pointer-events: auto;
 }
 body.modal #map {
   transform: translateY(-15%);
 }
 
+#map:after {
+  content: '🌳 Loading trees...';
+  display: inline-block;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  padding: 16px;
+  border-radius: 123123px;
+  background-color: rgba(0,0,0,.75);
+  color: #fff;
+  font-weight: bold;
+  font-size: 2em;
+  white-space: nowrap;
+  animation: loadingTrees 1s linear both infinite alternate;
+  transition: 1s all ease;
+  pointer-events: none;
+}
+#map.loaded:after {
+  opacity: 0;
+  animation: none;
+}
+@keyframes loadingTrees {
+  0% {
+    opacity: .1;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+#map canvas {
+  cursor: crosshair !important;
+}
+
+.mapboxgl-control-container {
+  transition: .3s filter ease-in-out;
+}
+body.modal .mapboxgl-control-container {
+  filter: blur(20px);
+}
+.mapboxgl-ctrl-group {
+  background-color: rgba(255,255,255,.8);
+  border-radius: 123123px;
+}
+@supports (backdrop-filter: blur(10px)){
+  .mapboxgl-ctrl-group {
+    background-color: rgba(255,255,255,.7);
+    backdrop-filter: blur(10px) saturate(3);
+  }
+}
+.mapboxgl-ctrl-group button {
+  opacity: .8;
+  width: 36px;
+  height: 36px;
+}
 .mapboxgl-ctrl-top-right {
   top: 55px;
+  transform: translate(100%);
+  opacity: 0;
+  transition: all .6s ease-in-out;
+}
+#map.loaded .mapboxgl-ctrl-top-right {
+  opacity: 1;
+  transform: translate(0);
+}
+.mapboxgl-ctrl-custom-pitch{
+  font-weight: bold;
+  font-size: 15px;
+  letter-spacing: -.5px;
+  transition: all .3s ease;
+}
+.active .mapboxgl-ctrl-custom-pitch{
+  color: #fff;
+  background-color: dodgerblue !important;
+}
+.mapboxgl-ctrl-custom-pitch span{
+  display: block;
+}
+
+@supports (top: max(1px)) {
+  .mapboxgl-ctrl-top-right {
+    right: max(0px, env(safe-area-inset-right));
+  }
 }
 
 #layers-button {
@@ -100,21 +200,22 @@ body.modal #map {
   top: 8px;
   right: 8px;
   cursor: pointer;
-  background-color: rgba(0,0,0,.5);
-  -webkit-backdrop-filter: blur(10px) saturate(2);
-  backdrop-filter: blur(10px) saturate(2);
+  background-color: rgba(0, 128, 0, .2);
+  border: 2px solid rgba(0,0,0,.4);
+  -webkit-backdrop-filter: blur(5px) saturate(3);
+  backdrop-filter: blur(5px) saturate(3);
   color: #fff;
   border-radius: 123123px;
   line-height: 0;
+  transition: all .3s ease;
 }
 @supports (left: max(0px)) {
   #layers-button {
-    right: max(8px, const(safe-area-inset-right));
     right: max(8px, env(safe-area-inset-right));
   }
 }
 #layers-button:hover {
-  background-color: rgba(0,0,0,.9);
+  border-color: rgba(0, 128, 0, 0.5);
 }
 #layers-button svg {
   transition: .3s transform ease-in-out;
@@ -170,7 +271,7 @@ body.modal #map {
   padding: 12px;
   background-color: rgba(0,0,0,.8);
   line-height: 1.4em;
-  transition: .3s transform cubic-bezier(0.175, 0.885, 0.32, 1.275);;
+  transition: .3s transform ease-in-out;
   box-shadow: 0 0 30px rgba(0,0,0,.5);
   overflow: auto;
   -webkit-overflow-scrolling: touch;
@@ -178,14 +279,14 @@ body.modal #map {
 #layers .flex {
   margin: auto;
   max-width: 400px;
-  height: 50vh;
+  max-height: 75vh;
   min-height: 300px;
   display: flex;
   flex-direction: column;
 }
 #layers[hidden] {
   display: block;
-  transform: translateY(100%);
+  transform: translate3d(0, 100%, 0);
 }
 #layers h1 {
   margin: 0 0 .5em;
@@ -197,7 +298,7 @@ body.modal #map {
 }
 #layers .pills {
   border: 1px solid rgba(255,255,255,.8);
-  border-radius: 5px;
+  border-radius: 123123px;
   display: flex;
   margin: 0;
   padding: 0;
@@ -227,6 +328,9 @@ body.modal #map {
   color: #fff;
   background-color: rgba(255,255,255,.2);
 }
+#layers .pills a:active {
+  background-color: rgba(255,255,255,.4);
+}
 #layers .pills a.selected {
   color: #000;
   background-color: #fff;
@@ -242,17 +346,25 @@ body.modal #map {
 #layers .legend.scrollable {
   overflow: auto;
   -webkit-overflow-scrolling: touch;
-  border-radius: 4px;
+  border-radius: 10px;
   padding: 4px;
   background: linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,.1));
 }
 #layers .legend.selected {
   display: block;
 }
-#layers .gradient {
-  border-radius: 123123px;
+#layers .legend table {
   width: 100%;
-  height: 10px;
+}
+#layers .legend .right {
+  text-align: right;
+}
+#layers .gradient {
+  background-origin: border-box !important;
+  border-radius: 123123px;
+  border: 3px solid rgba(0,0,0,.6);
+  width: 100%;
+  height: 14px;
   margin: 2px 0;
 }
 #layers .info {
@@ -263,6 +375,23 @@ body.modal #map {
 }
 #layers .label-right {
   text-align: right;
+}
+#layers .global-legend {
+  font-size: 13px;
+  text-align: center;
+  margin-top: 5px;
+  padding: 5px 8px;
+  background-color: rgba(255,255,255,.1);
+  border-radius: 7px;
+}
+#layers .global-legend > span {
+  display: inline-block;
+  margin-right: .5em;
+  font-size: 20px;
+  zoom: .5;
+}
+#layers .global-legend img {
+  vertical-align: -5px;
 }
 #layers .attribution {
   color: slategray;
@@ -288,20 +417,29 @@ body.modal #map {
   color: #fff;
   background-color: rgba(0,0,0,.85);
   padding: 12px;
-  transition: .3s all cubic-bezier(0.175, 0.885, 0.32, 1.275);;
+  transition: .3s all ease-in-out;
   box-shadow: 0 0 30px rgba(0,0,0,.5);
   z-index: 100;
   overflow: auto;
   -webkit-overflow-scrolling: touch;
+  border-top-left-radius: 18px;
+  border-top-right-radius: 18px;
 }
-#card:not(.focus):hover {
+@supports (top: max(1px)) {
+  #card {
+    padding-bottom: max(12px, env(safe-area-inset-bottom));
+  }
+}
+#card:not(.selected):hover {
   cursor: pointer;
   background-color: rgba(45, 45, 45, 0.85);
 }
-#card.focus {
+#card.selected {
   border-top: 3px solid dodgerblue;
-  box-shadow: 0 0 30px rgba(0,0,0,.8);
-  height: 50vh;
+  border-right: 3px solid dodgerblue;
+  border-left: 3px solid dodgerblue;
+  box-shadow: 0 0 30px #000;
+  background-color: #000;
 }
 #card[hidden] {
   display: block;
@@ -310,7 +448,7 @@ body.modal #map {
 #card .close {
   display: none;
 }
-#card.focus .close {
+#card.selected .close {
   display: block;
 }
 body.modal #card{
@@ -335,6 +473,7 @@ body.modal #card{
   font-size: 1.1em;
   margin: 0;
   padding: 0;
+  line-height: 1.3;
 }
 #card .common {
   color: lightslategray;
@@ -358,9 +497,6 @@ body.modal #card{
   margin: .5em 0 0;
   border-spacing: 0;
 }
-#card.focus table {
-  border-top: 0;
-}
 #card thead th {
   text-transform: uppercase;
   font-weight: normal;
@@ -374,26 +510,41 @@ body.modal #card{
   padding-right: .5em;
   font-size: 12px;
 }
-#card .learn {
-  display: block;
-  padding: 8px;
-  text-align: center;
-  background-color: dodgerblue;
-  border-radius: 6px;
+#card .footer-buttons {
   margin-top: 8px;
-  color: #fff;
+}
+#card .footer-buttons a {
+  display: inline-block;
+  padding: 6px 12px;
+  border: 3px solid dodgerblue;
+  border-radius: 123123px;
+  color: dodgerblue;
   text-decoration: none;
-  opacity: .9;
+  font-weight: bold;
+  line-height: 1.2;
 }
-#card .learn:hover {
-  opacity: 1;
+#card .footer-buttons a:first-child {
+  margin-right: 10px;
 }
-#card .learn:active {
+#card .footer-buttons a:hover {
+  background-color: rgba(255,255,255,.1);
+}
+#card .footer-buttons a:active {
   opacity: .5;
 }
 
 #legend-family .ib {
   margin-right: .6em;
+}
+
+#rendering-mode {
+  opacity: .75;
+  font-size: 10px;
+  padding: 12px;
+  margin: 6px -12px -12px;
+  background-color: rgba(229, 255, 0, 0.171);
+  line-height: 1.05;
+  border-radius: 3px;
 }
 
 @media (orientation: landscape) {
@@ -416,26 +567,19 @@ body.modal #card{
 @media (min-width: 416px) { /* 400 + 8 + 8 */
   #card {
     right: 8px;
-    bottom: 8px;
     max-width: 400px;
-    border-radius: 18px;
   }
-  @supports (left: max(0px)) {
+  @supports (top: max(1px)) {
     #card {
-      right: max(8px, const(safe-area-inset-right));
-      right: max(8px, env(safe-area-inset-right));
-      bottom: max(8px, const(safe-area-inset-bottom));
-      bottom: max(8px, env(safe-area-inset-bottom));
+      right: max(0px, env(safe-area-inset-right));
     }
   }
-  #card.focus {
-    border: 3px solid dodgerblue;
-    height: auto;
-    max-height: 90vh;
+  .show-m {
+    display: inline;
   }
 }
 
-@media (min-width: 768px) and (min-height: 600px) {
+@media (min-width: 1100px) and (min-height: 600px) {
   .mapboxgl-ctrl-top-right {
     top: 0;
   }
@@ -456,14 +600,6 @@ body.modal #card{
   #layers .flex {
     min-height: 0;
   }
-  @supports (left: max(0px)) {
-    #layers {
-      top: max(8px, const(safe-area-inset-top));
-      top: max(8px, env(safe-area-inset-top));
-      left: max(8px, const(safe-area-inset-left));
-      left: max(8px, env(safe-area-inset-leftt));
-    }
-  }
   #layers .flex {
     height: auto;
   }
@@ -481,10 +617,15 @@ body.modal #card{
 }
 
 @supports ((-webkit-backdrop-filter: blur(1px)) or (backdrop-filter: blur(1px))) {
+  .mapboxgl-ctrl-group {
+    background-color: rgba(255,255,255,.5);
+    -webkit-backdrop-filter: blur(10px) saturate(3);
+    backdrop-filter: blur(10px) saturate(3);
+  }
   #layers,
   #card {
-    background-color: rgba(0,0,0,.5);
-    -webkit-backdrop-filter: blur(20px) saturate(2);
-    backdrop-filter: blur(10px) saturate(2);
+    background-color: rgba(0,0,0,.3);
+    -webkit-backdrop-filter: blur(20px) saturate(3);
+    backdrop-filter: blur(20px) saturate(3);
   }
 }
