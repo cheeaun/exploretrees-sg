@@ -3,8 +3,7 @@ Explore Trees in Singapore
 
 On [17 March 2018](https://twitter.com/nparksbuzz/status/974857306734120960), [National Parks Board](https://www.nparks.gov.sg/) launched an all-new web site called [Trees.sg](http://trees.sg). On the next day, I started [my journey in getting the data](https://twitter.com/cheeaun/status/975272277926330369) [and visualizing it to my heart's content](https://twitter.com/cheeaun/status/976657582105362432).
 
-![](screenshots/trees-type-map.png)
-![](screenshots/trees-family-map.png)
+![Screenshot of ExploreTrees.SG](screenshots/trees-screenshot.gif)
 
 This is a personal side project to fuel my curiosity on these factors:
 
