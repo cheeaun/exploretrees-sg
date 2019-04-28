@@ -129,13 +129,15 @@ map.addControl(new mapboxgl.GeolocateControl({
 map.addControl(new mapboxgl.NavigationControl());
 
 let labelLayerId;
-let mapLoaded = new Promise((res, rej) => map.once('load', res));
-
-map.once('styledata', () => {
+let mapLoaded = new Promise((res, rej) => map.once('load', () => {
   map.once('idle', () => {
     document.getElementById('map').classList.add('loaded');
   });
 
+  res();
+}));
+
+map.once('styledata', () => {
   const layers = map.getStyle().layers;
   console.log(layers);
 
