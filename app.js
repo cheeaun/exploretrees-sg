@@ -1,18 +1,3 @@
-import MapboxLayer from '@deck.gl/mapbox/dist/esm/mapbox-layer';
-import { AmbientLight } from '@luma.gl/core/dist/esm/lighting/light-source';
-import PointLight from '@deck.gl/core/dist/esm/effects/lighting/point-light';
-import DirectionalLight from '@deck.gl/core/dist/esm/effects/lighting/directional-light';
-import LightingEffect from '@deck.gl/core/dist/esm/effects/lighting/lighting-effect';
-import ScatterplotLayer from '@deck.gl/layers/dist/esm/scatterplot-layer/scatterplot-layer';
-import SolidPolygonLayer from '@deck.gl/layers/dist/esm/solid-polygon-layer/solid-polygon-layer';
-import SimpleMeshLayer from '@deck.gl/mesh-layers/dist/esm/simple-mesh-layer/simple-mesh-layer';
-import SphereGeometry from '@luma.gl/core/dist/esm/geometries/sphere-geometry';
-import msgpack from '@ygoe/msgpack';
-import polyline from '@mapbox/polyline';
-import KDBush from 'kdbush';
-import geokdbush from 'geokdbush';
-import circle from '@turf/circle';
-import throttle from 'just-throttle';
 import { html, render } from 'lit-html';
 
 import treesDataPath from './data/trees.min.mp.ico';
@@ -125,8 +110,16 @@ const map = window._map = new mapboxgl.Map({
   boxZoom: false,
   attributionControl: false, // Attribution is inside Layers modal
   bounds: mapBounds,
-  maxTileCacheSize: renderingMode === 'low' ? 0 : null,
+  // maxTileCacheSize: renderingMode === 'low' ? 0 : null,
+  pitchWithRotate: renderingMode === 'high',
+  dragRotate: renderingMode === 'high',
+  keyboard: renderingMode === 'high',
+  fadeDuration: renderingMode === 'high' ? 300 : 0,
 });
+if (renderingMode === 'low') {
+  map.touchZoomRotate.disableRotation();
+  // map.on('error', (e) => alert(e));
+}
 map.addControl(new mapboxgl.GeolocateControl({
   positionOptions: {
     enableHighAccuracy: true,
@@ -135,23 +128,14 @@ map.addControl(new mapboxgl.GeolocateControl({
 }));
 map.addControl(new mapboxgl.NavigationControl());
 
-const highlightPoint = {};
-const highlightTreeLayer = new MapboxLayer({
-  visible: false,
-  id: 'highlight-tree',
-  type: ScatterplotLayer,
-  opacity: 1,
-  radiusMinPixels: 10,
-  getRadius: 3,
-  getFillColor: [26,128,227,50],
-  stroked: true,
-  lineWidthUnits: 'pixels',
-  getLineWidth: 3,
-  getLineColor: [26,128,227,255],
-});
-
 let labelLayerId;
-const mapLoaded = new Promise((res, rej) => map.once('load', () => {
+let mapLoaded = new Promise((res, rej) => map.once('load', res));
+
+map.once('styledata', () => {
+  map.once('idle', () => {
+    document.getElementById('map').classList.add('loaded');
+  });
+
   const layers = map.getStyle().layers;
   console.log(layers);
 
@@ -299,6 +283,8 @@ const mapLoaded = new Promise((res, rej) => map.once('load', () => {
 
   map.addSource('pois', {
     type: 'geojson',
+    tolerance: 10,
+    buffer: 0,
     data: {
       type: 'FeatureCollection',
       features: poisData.map(p => ({
@@ -343,17 +329,7 @@ const mapLoaded = new Promise((res, rej) => map.once('load', () => {
       ...poiStyles.paint,
     },
   });
-
-  setTimeout(() => {
-    map.addLayer(highlightTreeLayer);
-  }, 300);
-
-  map.once('idle', () => {
-    document.getElementById('map').classList.add('loaded');
-  });
-
-  res();
-}));
+});
 
 const families = Object.keys(familiesSpeciesData).sort();
 const fColors = [];
@@ -429,6 +405,7 @@ const showTree = (d, selected = false) => {
 
 let highlightedTree;
 let selectedTree;
+let hideHighlightTree;
 $card.onclick = (e) => {
   if (e.target && e.target.tagName.toLowerCase() === 'a') {
     return;
@@ -437,9 +414,7 @@ $card.onclick = (e) => {
   e.stopPropagation();
   if (e.target && e.target.classList.contains('close')) {
     $card.hidden = true;
-    highlightTreeLayer.setProps({
-      visible: false,
-    });
+    hideHighlightTree && hideHighlightTree();
     selectedTree = highlightedTree = null;
   } else if (highlightedTree) {
     selectedTree = highlightedTree;
@@ -596,6 +571,53 @@ const flyToPosition = (lngLat) => {
       },
     }, labelLayerId);
 
+    map.addSource('highlight-tree', {
+      type: 'geojson',
+      tolerance: 10,
+      buffer: 0,
+      data: {
+        type: 'Feature',
+      },
+    });
+    map.addLayer({
+      id: 'highlight-tree',
+      type: 'circle',
+      source: 'highlight-tree',
+      layout: {
+        visibility: 'none',
+      },
+      paint: {
+        'circle-color': [
+          'interpolate', ['linear'], ['zoom'],
+          0, 'rgba(255, 255, 255, .5)',
+          20, 'rgba(255, 255, 255, .1)'
+        ],
+        'circle-stroke-width': 3,
+        'circle-stroke-color': 'dodgerblue',
+        'circle-radius': [
+          'interpolate', ['linear'], ['zoom'],
+          0, 5,
+          14, 8,
+          24, 16
+        ],
+      },
+    });
+    const highlightTreeSource = map.getSource('highlight-tree');
+    function showHighlightTree(coordinates) {
+      map.setLayoutProperty('highlight-tree', 'visibility', 'visible');
+      highlightTreeSource.setData({
+        type: 'Feature',
+        properties: {},
+        geometry: {
+          type: 'Point',
+          coordinates,
+        },
+      });
+    };
+    hideHighlightTree = () => {
+      map.setLayoutProperty('highlight-tree', 'visibility', 'none');
+    };
+
     window.onhashchange = function(){
       const hash = location.hash.slice(1);
       let filter = (hash.match(/^[^/]+/i) || ['type'])[0];
@@ -634,9 +656,7 @@ const flyToPosition = (lngLat) => {
           // reset everything
           selectedTree = highlightedTree = null;
           $card.hidden = true;
-          highlightTreeLayer.setProps({
-            visible: false,
-          });
+          hideHighlightTree();
         }
       } else {
         let feature;
@@ -662,40 +682,75 @@ const flyToPosition = (lngLat) => {
             }
           });
         }
-        console.log(e, features);
+        // console.log(e, features);
         if (feature) {
           const { properties } = feature;
           const position = properties.position = properties.position.split(',').map(Number);
           highlightedTree = properties;
           showTree(highlightedTree);
-          highlightPoint.position = position;
-          highlightTreeLayer.setProps({
-            visible: true,
-            data: [highlightPoint],
-          });
+          showHighlightTree(position);
         } else {
           highlightedTree = null;
           $card.hidden = true;
-          highlightTreeLayer.setProps({
-            visible: false,
-          });
+          hideHighlightTree();
         }
       }
       return true;
     });
 
-    const throttledDrag = throttle(() => {
+    map.on('dragstart', () => {
       if (selectedTree) return;
       if ($card.hidden) return;
       $card.hidden = true;
+      hideHighlightTree();
+      return true;
+    });
+
+  } else {
+    const {
+      MapboxLayer,
+      AmbientLight,
+      PointLight,
+      DirectionalLight,
+      LightingEffect,
+      ScatterplotLayer,
+      SolidPolygonLayer,
+      SimpleMeshLayer,
+      SphereGeometry,
+      msgpack,
+      polyline,
+      KDBush,
+      geokdbush,
+      circle,
+      throttle,
+    } = await import('./hq.bundle');
+
+    const highlightPoint = {};
+    const highlightTreeLayer = new MapboxLayer({
+      visible: false,
+      id: 'highlight-tree',
+      type: ScatterplotLayer,
+      opacity: 1,
+      radiusMinPixels: 10,
+      getRadius: 3,
+      getFillColor: [26,128,227,50],
+      stroked: true,
+      lineWidthUnits: 'pixels',
+      getLineWidth: 3,
+      getLineColor: [26,128,227,255],
+    });
+    function showHighlightTree(coordinates) {
+      highlightPoint.position = coordinates;
+      highlightTreeLayer.setProps({
+        visible: true,
+        data: [highlightPoint],
+      });
+    };
+    hideHighlightTree = () => {
       highlightTreeLayer.setProps({
         visible: false,
       });
-      return true;
-    }, 1000);
-    map.on('drag', throttledDrag);
-
-  } else {
+    };
 
     // Pitch control
     class PitchControl {
@@ -906,6 +961,9 @@ const flyToPosition = (lngLat) => {
     };
 
     await mapLoaded;
+
+    map.addLayer(highlightTreeLayer);
+
     const [data, metadata] = await fetchTrees;
 
     treesLayer.setProps({ data });
@@ -948,9 +1006,7 @@ const flyToPosition = (lngLat) => {
       if (selectedTree) return;
       if ($card.hidden) return;
       $card.hidden = true;
-      highlightTreeLayer.setProps({
-        visible: false,
-      });
+      hideHighlightTree();
       return true;
     }, 1000);
     map.on('drag', throttledDrag);
@@ -993,11 +1049,7 @@ const flyToPosition = (lngLat) => {
         if (nearestTree) {
           highlightedTree = nearestTree;
           showTree(highlightedTree);
-          highlightPoint.position = highlightedTree.position;
-          highlightTreeLayer.setProps({
-            visible: true,
-            data: [highlightPoint],
-          });
+          showHighlightTree(highlightedTree.position);
         }
       });
     });
@@ -1012,9 +1064,7 @@ const flyToPosition = (lngLat) => {
           // reset everything
           selectedTree = highlightedTree = null;
           $card.hidden = true;
-          highlightTreeLayer.setProps({
-            visible: false,
-          });
+          hideHighlightTree();
         }
       } else {
         const point = e.lngLat;
@@ -1022,11 +1072,7 @@ const flyToPosition = (lngLat) => {
         if (highlightedTree) {
           if (isTouch) {
             showTree(highlightedTree);
-            highlightPoint.position = highlightedTree.position;
-            highlightTreeLayer.setProps({
-              visible: true,
-              data: [highlightPoint],
-            });
+            showHighlightTree(highlightedTree.position);
           } else {
             selectedTree = highlightedTree;
             showTree(selectedTree, true);
@@ -1034,9 +1080,7 @@ const flyToPosition = (lngLat) => {
           }
         } else {
           $card.hidden = true;
-          highlightTreeLayer.setProps({
-            visible: false,
-          });
+          hideHighlightTree();
         }
       }
       return true;
@@ -1101,9 +1145,7 @@ const flyToPosition = (lngLat) => {
           treesLayer.setProps({
             visible: false,
           });
-          if (!selectedTree) highlightTreeLayer.setProps({
-            visible: false,
-          });
+          if (!selectedTree) hideHighlightTree();
         } else {
           trees3DLayer.setProps({
             visible: false,

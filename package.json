@@ -32,6 +32,7 @@
   "devDependencies": {
     "@babel/core": "~7.4.4",
     "@babel/plugin-proposal-class-properties": "~7.4.4",
+    "@babel/plugin-transform-runtime": "~7.4.4",
     "@turf/turf": "~5.1.6",
     "autoprefixer": "~9.5.1",
     "cpy-cli": "~2.0.0",
@@ -42,6 +43,7 @@
     "postcss-modules": "~1.4.1"
   },
   "dependencies": {
+    "@babel/runtime": "~7.4.4",
     "@deck.gl/core": "~7.0.3",
     "@deck.gl/layers": "~7.0.3",
     "@deck.gl/mapbox": "~7.0.3",
@@ -51,12 +53,13 @@
     "@turf/circle": "~6.0.1",
     "@ygoe/msgpack": "~1.0.0",
     "geokdbush": "~1.1.0",
-    "just-throttle": "^1.1.0",
+    "just-throttle": "~1.1.0",
     "kdbush": "~3.0.0",
     "lit-html": "~1.0.0"
   },
   "babel": {
     "plugins": [
+      "@babel/plugin-transform-runtime",
       [
         "@babel/plugin-proposal-class-properties",
         {
