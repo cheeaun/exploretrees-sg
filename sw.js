@@ -33,7 +33,7 @@ workbox.routing.registerRoute(
 );
 
 workbox.routing.registerRoute(
-  /\/.*\.(mp|mp\.ico)$/,
+  /\/.*\.(mp|mp[a-z.]+\.ico)$/,
   new workbox.strategies.CacheFirst({
     cacheName: 'data',
     plugins: [
