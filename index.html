@@ -105,9 +105,8 @@ if (!supportsFetch || !supportsWebGL || !supportsClassList){
 }
 
 const _isTouch = 'ontouchstart' in window || navigator.msMaxTouchPoints;
-const _smallScreen = screen.width <= 600 || screen.height <= 600;
 const _hqHash = /#hq/.test(location.hash);
-const _renderingMode = !_hqHash && (_isTouch && _smallScreen) ? 'low' : 'high';
+const _renderingMode = !_hqHash && _isTouch ? 'low' : 'high';
 if (_renderingMode === 'high') {
   document.getElementById('dummy-fetch').rel = 'preload';
 }

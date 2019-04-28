@@ -14,9 +14,8 @@ for (let family in familiesSpeciesData) {
 }
 
 const isTouch = 'ontouchstart' in window || navigator.msMaxTouchPoints;
-const smallScreen = screen.width <= 600 || screen.height <= 600;
 const hqHash = /#hq/.test(location.hash);
-const renderingMode = !hqHash && (isTouch && smallScreen) ? 'low' : 'high';
+const renderingMode = !hqHash && isTouch ? 'low' : 'high';
 
 if (renderingMode === 'low') document.getElementById('rendering-mode').hidden = false;
 
