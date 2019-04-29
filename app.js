@@ -975,8 +975,8 @@ const flyToPosition = (lngLat) => {
 
     window.onhashchange = function(){
       const hash = location.hash.slice(1);
-      const filter = (hash.match(/^[^/]+/i) || ['type'])[0];
-      const styles = layerStyles[filter] || layerStyles.type;
+      let filter = (hash.match(/^[^/]+/i) || ['type'])[0];
+      let styles = layerStyles[filter];
       if (!styles) {
         filter = 'type';
         styles = layerStyles.type;
