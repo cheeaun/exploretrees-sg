@@ -5,6 +5,8 @@ On [17 March 2018](https://twitter.com/nparksbuzz/status/974857306734120960), [N
 
 ![Screenshot of ExploreTrees.SG](screenshots/trees-screenshot.gif)
 
+![Screenshots of 3D trees](screenshots/trees-3d-screenshot.jpg)
+
 This is a personal side project to fuel my curiosity on these factors:
 
 - Plotting more than 500,000 data points on [Mapbox GL JS](https://www.mapbox.com/mapbox-gl-js/).
