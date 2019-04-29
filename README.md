@@ -19,6 +19,8 @@ This is a personal side project to fuel my curiosity on these factors:
   - Prominent/important trees stand out more by having larger radii.
   - Super fast info card by just hovering on the tree markers (for devices with a mouse).
 
+👉👉👉 **Read more about it**: [Building ExploreTrees.SG](https://cheeaun.com/blog/2018/04/building-exploretrees-sg/). 👈👈👈
+
 Technicalities
 ---
 
