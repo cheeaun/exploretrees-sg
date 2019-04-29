@@ -1104,26 +1104,27 @@ const flyToPosition = (lngLat) => {
             sd = sin(d), cd = cos(d), ch = cos(h);
       return asin(sr * sd + cr * cd * ch);
     };
-    const phaseColor = (() => {
-      const altitude = getSunAzimuth(+new Date(), 103.8, 1.4);
+    const getPhaseColor = (timestamp) => {
+      const altitude = getSunAzimuth(timestamp, 103.8, 1.4); // SG coords
       const d = 180 / Math.PI;
       const h = d * altitude;
       return h < -0.833 ? 'dark' : 'bright';
-    })();
-    const ambientLight = new AmbientLight({
-      intensity: phaseColor === 'dark' ? 1 : 1.5,
-    });
-    const sunLight = new SunLight({
-      timestamp: +new Date(),
-      intensity: phaseColor === 'dark' ? 1 : 2,
-    });;
-    const lightingEffect = new LightingEffect({ ambientLight, sunLight });
-    // trees3DLayer.deck.setProps({
-    //   effects: [lightingEffect],
-    // });
-    treesCrownLayer.deck.setProps({
-      effects: [lightingEffect],
-    });
+    };
+    const setLighting = window._setLighting = (timestamp) => {
+      const phaseColor = getPhaseColor(timestamp);
+      const ambientLight = new AmbientLight({
+        intensity: phaseColor === 'dark' ? 1 : 1.5,
+      });
+      const sunLight = new SunLight({
+        timestamp: +new Date(),
+        intensity: phaseColor === 'dark' ? .5 : 2,
+      });;
+      const lightingEffect = new LightingEffect({ ambientLight, sunLight });
+      treesCrownLayer.deck.setProps({
+        effects: [lightingEffect],
+      });
+    };
+    setLighting(+new Date());
 
     let renderRAF;
     const renderTrees = throttle(() => {
