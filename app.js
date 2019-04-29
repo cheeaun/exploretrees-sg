@@ -1102,7 +1102,7 @@ const flyToPosition = (lngLat) => {
             sl = sin(l), cr = cos(r * lat), sr = sin(r * lat), d = asin(sin(e) * sl),
             h = r * (280.46061837 + 13184999.8983375 * t + lng) - atan2(cos(e) * sl, cos(l)),
             sd = sin(d), cd = cos(d), ch = cos(h);
-      return PI + atan2(sin(h), ch * sr - cr * sd / cd);
+      return asin(sr * sd + cr * cd * ch);
     };
     const phaseColor = (() => {
       const altitude = getSunAzimuth(+new Date(), 103.8, 1.4);
