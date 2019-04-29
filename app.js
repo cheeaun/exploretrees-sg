@@ -711,8 +711,7 @@ const flyToPosition = (lngLat) => {
     const {
       MapboxLayer,
       AmbientLight,
-      PointLight,
-      DirectionalLight,
+      SunLight,
       LightingEffect,
       ScatterplotLayer,
       SolidPolygonLayer,
@@ -1092,26 +1091,33 @@ const flyToPosition = (lngLat) => {
     map.addLayer(treesCrownLayer, labelLayerId);
     map.setLayerZoomRange('trees-crown', 16, 20.5);
 
-    // create ambient light source
+    // Modified from https://observablehq.com/@mourner/sun-position-in-900-bytes
+    const getSunAzimuth = (date, lng, lat) => {
+      const {sin, cos, asin, atan2, PI} = Math,
+            r = PI / 180, t = date / 315576e7 - 0.3,
+            m = r * (357.52911 + t * (35999.05029 - t * 1537e-7)), c = cos(r * (125.04 - 1934.136 * t)),
+            l = r * (280.46646 + t * (36000.76983 + t * 3032e-7) + (1.914602 - t * (4817e-6 - t * 14e-6)) * sin(m) -
+                     569e-5 - 478e-5 * c) + (0.019993 - 101e-6 * t) * sin(2 * m) + 289e-6 * sin(3 * m),
+            e = r * (84381.448 - t * (46.815 - t * (59e-5 + 1813e-6 * t))) / 3600 + r * 256e-5 * c,
+            sl = sin(l), cr = cos(r * lat), sr = sin(r * lat), d = asin(sin(e) * sl),
+            h = r * (280.46061837 + 13184999.8983375 * t + lng) - atan2(cos(e) * sl, cos(l)),
+            sd = sin(d), cd = cos(d), ch = cos(h);
+      return PI + atan2(sin(h), ch * sr - cr * sd / cd);
+    };
+    const phaseColor = (() => {
+      const altitude = getSunAzimuth(+new Date(), 103.8, 1.4);
+      const d = 180 / Math.PI;
+      const h = d * altitude;
+      return h < -0.833 ? 'dark' : 'bright';
+    })();
     const ambientLight = new AmbientLight({
-      color: [255, 255, 255],
-      intensity: 1.0
+      intensity: phaseColor === 'dark' ? 1 : 1.5,
     });
-    // create point light source
-    const pointLight = new PointLight({
-      color: [255, 255, 255],
-      intensity: 2.0,
-      // use coordinate system as the same as view state
-      position: [-125, 50.5, 5000]
-    });
-    // create directional light source
-    const directionalLight = new DirectionalLight({
-      color: [255, 255, 255],
-      intensity: 1.0,
-      direction: [-3, -9, -1]
-    });
-    // create lighting effect with light sources
-    const lightingEffect = new LightingEffect({ambientLight, pointLight, directionalLight});
+    const sunLight = new SunLight({
+      timestamp: +new Date(),
+      intensity: phaseColor === 'dark' ? 1 : 2,
+    });;
+    const lightingEffect = new LightingEffect({ ambientLight, sunLight });
     // trees3DLayer.deck.setProps({
     //   effects: [lightingEffect],
     // });

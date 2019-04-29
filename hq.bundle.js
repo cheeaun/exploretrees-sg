@@ -1,7 +1,6 @@
 import MapboxLayer from '@deck.gl/mapbox/dist/esm/mapbox-layer';
 import { AmbientLight } from '@luma.gl/core/dist/esm/lighting/light-source';
-import PointLight from '@deck.gl/core/dist/esm/effects/lighting/point-light';
-import DirectionalLight from '@deck.gl/core/dist/esm/effects/lighting/directional-light';
+import SunLight from '@deck.gl/core/dist/esm/effects/lighting/sun-light';
 import LightingEffect from '@deck.gl/core/dist/esm/effects/lighting/lighting-effect';
 import ScatterplotLayer from '@deck.gl/layers/dist/esm/scatterplot-layer/scatterplot-layer';
 import SolidPolygonLayer from '@deck.gl/layers/dist/esm/solid-polygon-layer/solid-polygon-layer';
@@ -17,8 +16,7 @@ import throttle from 'just-throttle';
 export {
   MapboxLayer,
   AmbientLight,
-  PointLight,
-  DirectionalLight,
+  SunLight,
   LightingEffect,
   ScatterplotLayer,
   SolidPolygonLayer,
