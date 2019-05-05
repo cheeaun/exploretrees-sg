@@ -1125,6 +1125,10 @@ const flyToPosition = (lngLat) => {
       });
     };
     setLighting(+new Date());
+    setInterval(() => {
+      console.log('Update sun light');
+      setLighting(+new Date());
+    }, 10*60*1000); // Update sun light 10 mins
 
     let renderRAF;
     const renderTrees = throttle(() => {
