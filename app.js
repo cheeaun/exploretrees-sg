@@ -1116,7 +1116,7 @@ const flyToPosition = (lngLat) => {
         intensity: phaseColor === 'dark' ? 1 : 1.5,
       });
       const sunLight = new SunLight({
-        timestamp: +new Date(),
+        timestamp,
         intensity: phaseColor === 'dark' ? .5 : 2,
       });;
       const lightingEffect = new LightingEffect({ ambientLight, sunLight });
