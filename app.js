@@ -172,6 +172,7 @@ map.once('styledata', () => {
       },
     });
   } else {
+    map.setFilter('building', ['==', 'render_min_height', 0]);
     map.setPaintProperty('building', 'fill-color', 'rgba(200,200,200,.1)');
     map.setPaintProperty('building', 'fill-antialias', false);
     map.setLayerZoomRange('building', 15, 21);
