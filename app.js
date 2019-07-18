@@ -96,13 +96,15 @@ $layers.onclick = function(e){
   }
 }
 
+mapboxgl.accessToken = 'pk.eyJ1IjoiY2hlZWF1biIsImEiOiJjanF3azBrMjMwM2w1NDNyN3Yzc21saDUzIn0.jNWlsBO-S3uDKdfT9IKT1A';
 const mapBounds = [
   [ 103.6016626883025, 1.233357600011331 ], // sw
   [ 104.0381760444838, 1.473818072475055 ] // ne
 ];
 const map = window._map = new mapboxgl.Map({
   container: 'map',
-  style: 'https://api.maptiler.com/maps/darkmatter/style.json?key=xjrAbdVfXA48AYcOS16e',
+  // style: 'https://api.maptiler.com/maps/darkmatter/style.json?key=xjrAbdVfXA48AYcOS16e',
+  style: 'https://maps.gahmen.tech/styles/dark_matter/style.json',
   minZoom: 8,
   maxZoom: 20,
   renderWorldCopies: false,
@@ -212,7 +214,8 @@ map.once('styledata', () => {
       'icon-size': .5,
       'text-font': [
         'Metropolis Light',
-        'Noto Sans Regular'
+        // 'Noto Sans Regular'
+        'Klokantech Noto Sans Regular'
       ],
       'text-max-width': 12,
       'text-variable-anchor': ['left', 'right', 'bottom', 'top'],
@@ -448,7 +451,6 @@ const flyToPosition = (lngLat) => {
 (async () => {
   if (renderingMode === 'low') {
 
-    mapboxgl.accessToken = 'pk.eyJ1IjoiY2hlZWF1biIsImEiOiJjanF3azBrMjMwM2w1NDNyN3Yzc21saDUzIn0.jNWlsBO-S3uDKdfT9IKT1A';
     await mapLoaded;
 
     map.addSource('trees-source', {
