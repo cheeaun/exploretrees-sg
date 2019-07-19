@@ -3,8 +3,13 @@ workflow "Deploy to gh-pages" {
   on = "push"
 }
 
+action "master branch only" {
+  uses = "actions/bin/filter@1.1.3"
+  args = "branch master"
+}
+
 action "Deploy to GitHub Pages" {
-  uses = "JamesIves/github-pages-deploy-action@1.1.1"
+  uses = "JamesIves/github-pages-deploy-action@master"
   env = {
     BRANCH = "gh-pages"
     BUILD_SCRIPT = "npm install && npm run build"
@@ -12,4 +17,5 @@ action "Deploy to GitHub Pages" {
     CNAME = "exploretrees.sg"
   }
   secrets = ["ACCESS_TOKEN"]
+  needs = ["master branch only"]
 }
