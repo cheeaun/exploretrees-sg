@@ -4,7 +4,7 @@ workflow "Deploy to gh-pages" {
 }
 
 action "master branch only" {
-  uses = "actions/bin/filter@1.1.3"
+  uses = "actions/bin/filter@master"
   args = "branch master"
 }
 
