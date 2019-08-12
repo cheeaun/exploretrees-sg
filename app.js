@@ -103,8 +103,8 @@ const mapBounds = [
 ];
 const map = window._map = new mapboxgl.Map({
   container: 'map',
-  // style: 'https://api.maptiler.com/maps/darkmatter/style.json?key=xjrAbdVfXA48AYcOS16e',
-  style: 'https://maps.gahmen.tech/styles/dark_matter/style.json',
+  style: 'https://api.maptiler.com/maps/darkmatter/style.json?key=xjrAbdVfXA48AYcOS16e',
+  // style: 'https://maps.gahmen.tech/styles/dark_matter/style.json',
   minZoom: 8,
   maxZoom: 20,
   renderWorldCopies: false,
@@ -214,8 +214,8 @@ map.once('styledata', () => {
       'icon-size': .5,
       'text-font': [
         'Metropolis Light',
-        // 'Noto Sans Regular'
-        'Klokantech Noto Sans Regular'
+        'Noto Sans Regular'
+        // 'Klokantech Noto Sans Regular'
       ],
       'text-max-width': 12,
       'text-variable-anchor': ['left', 'right', 'bottom', 'top'],
