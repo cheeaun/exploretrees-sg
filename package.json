@@ -16,7 +16,7 @@
     "start": "parcel index.html --no-hmr",
     "prebuild": "rm -rf dist",
     "build": "parcel build index.html",
-    "postbuild": "cpy favicon.ico dist"
+    "postbuild": "cpy {CNAME,favicon.ico} dist"
   },
   "keywords": [
     "explore",
