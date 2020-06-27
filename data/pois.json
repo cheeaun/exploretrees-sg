@@ -384,6 +384,14 @@
 		]
 	},
 	{
+		"name": "Katong Park",
+		"type": "park",
+		"position": [
+			103.88637,
+			1.29717
+		]
+	},
+	{
 		"name": "Jambol Place Park",
 		"type": "park",
 		"position": [
@@ -1904,6 +1912,14 @@
 		]
 	},
 	{
+		"name": "Jalan Pari Burong Playground",
+		"type": "park",
+		"position": [
+			103.94694,
+			1.33385
+		]
+	},
+	{
 		"name": "Teacher's Estate Playground",
 		"type": "park",
 		"position": [
@@ -3357,14 +3373,6 @@
 		"position": [
 			103.75141,
 			1.38955
-		]
-	},
-	{
-		"name": "Zhenghua Nature Park",
-		"type": "park",
-		"position": [
-			103.77835,
-			1.36794
 		]
 	},
 	{
