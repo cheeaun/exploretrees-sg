@@ -1,6 +1,6 @@
 {
   "name": "exploretrees-sg",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "Explore trees in Singapore",
   "scripts": {
     "trees": "node scripts/fetch-trees",
