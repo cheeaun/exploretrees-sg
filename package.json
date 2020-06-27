@@ -35,7 +35,7 @@
     "@turf/turf": "~5.1.6",
     "autoprefixer": "~9.8.4",
     "cpy-cli": "~3.1.1",
-    "got": "~9.6.0",
+    "got": "~11.3.0",
     "parcel-bundler": "~1.12.4",
     "parcel-plugin-bundle-visualiser": "~1.2.0",
     "postcss-import-url": "~5.1.0",

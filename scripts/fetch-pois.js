@@ -5,14 +5,19 @@ const svy21 = new SVY21();
 
 const round5 = (n) => Number(Number(n).toFixed(5));
 
-(async() => {
-  const { body } = await got('https://www.nparks.gov.sg/clientservice/greenmap.asmx/GetFeatures', { json: true });
+(async () => {
+  const {
+    body,
+  } = await got(
+    'https://www.nparks.gov.sg/clientservice/greenmap.asmx/GetFeatures',
+    { responseType: 'json' },
+  );
 
   const pois = [];
   const types = new Set();
   Object.values(body).forEach((regions) => {
-    Object.values(regions).forEach(locations => {
-      locations.forEach(poi => {
+    Object.values(regions).forEach((locations) => {
+      locations.forEach((poi) => {
         const type = poi.symbol.trim().replace(/s?\.[^.]+$/, '');
         // Ignore heritage trees for now
         // There's already existing htrees data from other scripts
