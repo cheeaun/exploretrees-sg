@@ -134,6 +134,7 @@ const map = (window._map = new mapboxgl.Map({
   dragRotate: renderingMode === 'high',
   keyboard: renderingMode === 'high',
   fadeDuration: renderingMode === 'high' ? 300 : 0,
+  touchPitch: renderingMode === 'high',
 }));
 if (renderingMode === 'low') {
   map.touchZoomRotate.disableRotation();
