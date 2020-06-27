@@ -920,7 +920,7 @@ const flyToPosition = (lngLat) => {
       visible: false,
       id: 'trees-crown',
       type: SimpleMeshLayer,
-      texture: document.getElementById('leaves'),
+      texture: require('./assets/leaves.png'),
       mesh: new SphereGeometry(),
       data: [],
       getColor: colorName2RGB('green').concat(100),

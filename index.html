@@ -11,8 +11,9 @@
 <link rel="dns-prefetch" href="https://api.maptiler.com" crossorigin>
 <link rel="dns-prefetch" href="https://www.googletagmanager.com" crossorigin>
 <link rel="dns-prefetch" href="https://www.google-analytics.com" crossorigin>
-<link id="preload" as="script" href="https://api.tiles.mapbox.com/mapbox-gl-js/v1.2.1/mapbox-gl.js">
-<link id="dummy-fetch" as="fetch" href="./data/trees.min.mp.ico" crossorigin>
+<link rel="preload" as="script" href="https://api.tiles.mapbox.com/mapbox-gl-js/v1.11.0/mapbox-gl.js">
+<link class="dummy-fetch" as="fetch" href="./hq.bundle.js" crossorigin>
+<link class="dummy-fetch" as="fetch" href="./data/trees.min.mp.ico" crossorigin>
 <!-- metacrap: https://adactio.com/journal/9881 -->
 <meta name="description" content="Explore trees in Singapore">
 <meta name="twitter:card" content="summary">
@@ -21,6 +22,16 @@
 <meta name="twitter:title" property="og:title" content="ExploreTrees.SG">
 <meta name="twitter:description" property="og:description" content="Explore trees in Singapore">
 <meta name="twitter:image" property="og:image" content="https://i.imgur.com/Eh6GK0Q.png">
+<script>
+const _isTouch = 'ontouchstart' in window || navigator.msMaxTouchPoints;
+const _hqHash = /#hq/.test(location.hash);
+const _renderingMode = !_hqHash && _isTouch ? 'low' : 'high';
+if (_renderingMode === 'high') {
+  document.querySelectorAll('.dummy-fetch').forEach(l => {
+    l.rel = 'preload';
+  });
+}
+</script>
 <!-- end metacrap -->
 <div id="map"></div>
 <div id="modal"></div>
@@ -73,10 +84,10 @@
     </div>
     <div class="legend family scrollable" id="legend-family"></div>
     <div class="global-legend">
-      <span><img src="./assets/park-icon.png" id="park-icon" width="24" height="24" alt=""> Park</span>
-      <span><img src="./assets/hroad-icon.png" id="hroad-icon" width="24" height="24" alt=""> Heritage Road</span>
-      <span><img src="./assets/srgreenery-icon.png" id="srgreenery-icon" width="24" height="24" alt=""> Skyrise Greenery</span>
-      <span><img src="./assets/garden-icon.png" id="garden-icon" width="24" height="24" alt=""> Community Garden</span>
+      <span><img src="./assets/park-icon.png" id="park-icon" width="24" height="24" alt="" loading="lazy"> Park</span>
+      <span><img src="./assets/hroad-icon.png" id="hroad-icon" width="24" height="24" alt="" loading="lazy"> Heritage Road</span>
+      <span><img src="./assets/srgreenery-icon.png" id="srgreenery-icon" width="24" height="24" alt="" loading="lazy"> Skyrise Greenery</span>
+      <span><img src="./assets/garden-icon.png" id="garden-icon" width="24" height="24" alt="" loading="lazy"> Community Garden</span>
     </div>
     <div class="attribution">
       Visualized by <a href="https://twitter.com/cheeaun">@cheeaun</a>. Available on <a href="https://github.com/cheeaun/exploretrees-sg" target="_blank">GitHub</a>.
@@ -93,7 +104,6 @@
   </div>
 </div>
 <div id="card" hidden></div>
-<img id="leaves" src="./assets/leaves.png" alt="" hidden>
 <script src="https://api.tiles.mapbox.com/mapbox-gl-js/v1.11.0/mapbox-gl.js"></script>
 <script src="app.js"></script>
 <script>
@@ -102,13 +112,6 @@ const supportsWebGL = 'WebGLRenderingContext' in window;
 const supportsClassList = 'classList' in document.documentElement;
 if (!supportsFetch || !supportsWebGL || !supportsClassList){
   alert("Sorry, this web site doesn't work on your web browser. Please use a newer modern browser.");
-}
-
-const _isTouch = 'ontouchstart' in window || navigator.msMaxTouchPoints;
-const _hqHash = /#hq/.test(location.hash);
-const _renderingMode = !_hqHash && _isTouch ? 'low' : 'high';
-if (_renderingMode === 'high') {
-  document.getElementById('dummy-fetch').rel = 'preload';
 }
 
 if ('serviceWorker' in navigator) {
