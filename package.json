@@ -30,41 +30,36 @@
   "author": "Lim Chee Aun",
   "license": "MIT",
   "devDependencies": {
-    "@babel/core": "~7.5.5",
-    "@babel/plugin-proposal-class-properties": "~7.5.5",
-    "@babel/plugin-transform-runtime": "~7.5.5",
+    "@babel/core": "~7.10.3",
+    "@babel/plugin-transform-runtime": "~7.10.3",
     "@turf/turf": "~5.1.6",
-    "autoprefixer": "~9.6.1",
-    "cpy-cli": "~2.0.0",
+    "autoprefixer": "~9.8.4",
+    "cpy-cli": "~3.1.1",
     "got": "~9.6.0",
-    "parcel-bundler": "~1.12.3",
+    "parcel-bundler": "~1.12.4",
     "parcel-plugin-bundle-visualiser": "~1.2.0",
-    "postcss-import-url": "~4.0.0",
-    "postcss-modules": "~1.4.1"
+    "postcss-import-url": "~5.1.0",
+    "postcss-modules": "~3.1.0"
   },
   "dependencies": {
-    "@babel/runtime": "~7.5.5",
-    "@deck.gl/core": "~7.2.0",
-    "@deck.gl/layers": "~7.2.0",
-    "@deck.gl/mapbox": "~7.2.0",
-    "@deck.gl/mesh-layers": "~7.2.0",
-    "@luma.gl/core": "~7.2.0",
-    "@mapbox/polyline": "~1.1.0",
+    "@babel/runtime": "~7.10.3",
+    "@deck.gl/core": "~8.1.12",
+    "@deck.gl/layers": "~8.1.12",
+    "@deck.gl/mapbox": "~8.1.12",
+    "@deck.gl/mesh-layers": "~8.1.12",
+    "@luma.gl/core": "~8.1.3",
+    "@mapbox/polyline": "~1.1.1",
     "@turf/circle": "~6.0.1",
     "@ygoe/msgpack": "~1.0.2",
     "geokdbush": "~1.1.0",
     "just-throttle": "~1.1.0",
     "kdbush": "~3.0.0",
-    "lit-html": "~1.1.1"
+    "lit-html": "~1.2.1"
   },
   "babel": {
     "plugins": [
-      "@babel/plugin-transform-runtime",
       [
-        "@babel/plugin-proposal-class-properties",
-        {
-          "loose": true
-        }
+        "@babel/plugin-transform-runtime"
       ]
     ]
   },
