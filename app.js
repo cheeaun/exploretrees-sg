@@ -464,7 +464,7 @@ const markupCard = (d, selected) => html`
             Google Maps
           </a>
           <a
-            href="https://florafaunaweb.nparks.gov.sg/Special-Pages/plant-detail-master.aspx?id=${d.species_id}"
+            href="https://www.nparks.gov.sg/api/FFWApi/RedirectToFloraByMasterId?masterId=${d.species_id}"
             target="_blank"
           >
             🔍 Learn more
