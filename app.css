@@ -3,15 +3,21 @@
 * {
   box-sizing: border-box;
 }
-html, body {
+html,
+body {
   overflow: hidden;
   margin: 0;
   padding: 0;
-  background-color: #0C0C0C;
+  background-color: #0c0c0c;
   text-size-adjust: none;
 }
-body, input, button, select, textarea {
-  font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Oxygen-Sans,Ubuntu,Cantarell,"Helvetica Neue",sans-serif;
+body,
+input,
+button,
+select,
+textarea {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
+    Oxygen-Sans, Ubuntu, Cantarell, 'Helvetica Neue', sans-serif;
   font-size: 14px;
 }
 svg {
@@ -29,7 +35,7 @@ svg {
   height: 16px;
   line-height: 16px;
   font-size: 12px;
-  background-color: rgba(255,255,255,.25);
+  background-color: rgba(255, 255, 255, 0.25);
   border-radius: 123123px;
   text-decoration: none;
   font-weight: bold;
@@ -41,9 +47,9 @@ svg {
   width: 14px;
   height: 14px;
   border-radius: 123123px;
-  border: 3px solid rgba(0,0,0,.6);
+  border: 3px solid rgba(0, 0, 0, 0.6);
   vertical-align: middle;
-  transition: .3s background-color;
+  transition: 0.3s background-color;
 }
 
 .close {
@@ -56,20 +62,20 @@ svg {
   border-radius: 123123px;
   text-align: center;
   color: #fff;
-  background-color: rgba(255,255,255,.3);
+  background-color: rgba(255, 255, 255, 0.3);
   font-weight: bold;
   font-size: 14px;
   line-height: 0;
   cursor: pointer;
   outline: 0;
   margin: 0 0 4px 4px;
-  transition: .3s background-color ease-in-out;
+  transition: 0.3s background-color ease-in-out;
 }
 .close:hover {
-  background-color: rgba(255,255,255,.5);
+  background-color: rgba(255, 255, 255, 0.5);
 }
 .close:active {
-  opacity: .5;
+  opacity: 0.5;
 }
 
 #modal {
@@ -80,10 +86,10 @@ svg {
   right: 0;
   bottom: 0;
   left: 0;
-  background-color: rgba(0,0,0,.5);
+  background-color: rgba(0, 0, 0, 0.5);
   opacity: 0;
   pointer-events: none;
-  transition: .3s opacity ease-in-out;
+  transition: 0.3s opacity ease-in-out;
 }
 body.modal #modal {
   opacity: 1;
@@ -95,7 +101,7 @@ body.modal #modal {
   top: 0;
   bottom: 0;
   width: 100%;
-  transition: .3s all ease-in-out;
+  transition: 0.3s all ease-in-out;
   pointer-events: none;
 }
 #map.loaded {
@@ -114,7 +120,7 @@ body.modal #map {
   transform: translate(-50%, -50%);
   padding: 16px;
   border-radius: 123123px;
-  background-color: rgba(0,0,0,.75);
+  background-color: rgba(0, 0, 0, 0.75);
   color: #fff;
   font-weight: bold;
   font-size: 2em;
@@ -129,7 +135,7 @@ body.modal #map {
 }
 @keyframes loadingTrees {
   0% {
-    opacity: .1;
+    opacity: 0.1;
   }
   100% {
     opacity: 1;
@@ -141,23 +147,23 @@ body.modal #map {
 }
 
 .mapboxgl-control-container {
-  transition: .3s filter ease-in-out;
+  transition: 0.3s filter ease-in-out;
 }
 body.modal .mapboxgl-control-container {
   filter: blur(20px);
 }
 .mapboxgl-ctrl-group {
-  background-color: rgba(255,255,255,.8);
+  background-color: rgba(255, 255, 255, 0.8);
   border-radius: 123123px;
 }
-@supports (backdrop-filter: blur(10px)){
+@supports (backdrop-filter: blur(10px)) {
   .mapboxgl-ctrl-group {
-    background-color: rgba(255,255,255,.7);
+    background-color: rgba(255, 255, 255, 0.7);
     backdrop-filter: blur(10px) saturate(3);
   }
 }
 .mapboxgl-ctrl-group button {
-  opacity: .8;
+  opacity: 0.8;
   width: 36px;
   height: 36px;
 }
@@ -165,23 +171,23 @@ body.modal .mapboxgl-control-container {
   top: 55px;
   transform: translate(100%);
   opacity: 0;
-  transition: all .6s ease-in-out;
+  transition: all 0.6s ease-in-out;
 }
 #map.loaded .mapboxgl-ctrl-top-right {
   opacity: 1;
   transform: translate(0);
 }
-.mapboxgl-ctrl-custom-pitch{
+.mapboxgl-ctrl-custom-pitch {
   font-weight: bold;
   font-size: 15px;
-  letter-spacing: -.5px;
-  transition: all .3s ease;
+  letter-spacing: -0.5px;
+  transition: all 0.3s ease;
 }
-.active .mapboxgl-ctrl-custom-pitch{
+.active .mapboxgl-ctrl-custom-pitch {
   color: #fff;
   background-color: dodgerblue !important;
 }
-.mapboxgl-ctrl-custom-pitch span{
+.mapboxgl-ctrl-custom-pitch span {
   display: block;
 }
 
@@ -200,14 +206,14 @@ body.modal .mapboxgl-control-container {
   top: 8px;
   right: 8px;
   cursor: pointer;
-  background-color: rgba(0, 128, 0, .2);
-  border: 2px solid rgba(0,0,0,.4);
+  background-color: rgba(0, 128, 0, 0.2);
+  border: 2px solid rgba(0, 0, 0, 0.4);
   -webkit-backdrop-filter: blur(5px) saturate(3);
   backdrop-filter: blur(5px) saturate(3);
   color: #fff;
   border-radius: 123123px;
   line-height: 0;
-  transition: all .3s ease;
+  transition: all 0.3s ease;
 }
 @supports (left: max(0px)) {
   #layers-button {
@@ -218,7 +224,7 @@ body.modal .mapboxgl-control-container {
   border-color: rgba(0, 128, 0, 0.5);
 }
 #layers-button svg {
-  transition: .3s transform ease-in-out;
+  transition: 0.3s transform ease-in-out;
 }
 #layers-button:hover svg {
   transform: rotate(30deg);
@@ -227,18 +233,38 @@ body.modal .mapboxgl-control-container {
   animation: wiggle 1s 5s ease-in-out;
 }
 @-webkit-keyframes wiggle {
-  0% { transform: rotate(0) }
-  25% { transform: rotate(-25deg) }
-  50% { transform: rotate(25deg) }
-  75% { transform: rotate(-25deg) }
-  100% { transform: rotate(0) }
+  0% {
+    transform: rotate(0);
+  }
+  25% {
+    transform: rotate(-25deg);
+  }
+  50% {
+    transform: rotate(25deg);
+  }
+  75% {
+    transform: rotate(-25deg);
+  }
+  100% {
+    transform: rotate(0);
+  }
 }
 @keyframes wiggle {
-  0% { transform: rotate(0) }
-  25% { transform: rotate(-25deg) }
-  50% { transform: rotate(25deg) }
-  75% { transform: rotate(-25deg) }
-  100% { transform: rotate(0) }
+  0% {
+    transform: rotate(0);
+  }
+  25% {
+    transform: rotate(-25deg);
+  }
+  50% {
+    transform: rotate(25deg);
+  }
+  75% {
+    transform: rotate(-25deg);
+  }
+  100% {
+    transform: rotate(0);
+  }
 }
 #layers-button:before {
   content: attr(title);
@@ -253,12 +279,22 @@ body.modal .mapboxgl-control-container {
   animation: poof 1s 5s ease-in both;
 }
 @-webkit-keyframes poof {
-  50% { opacity: .1; }
-  100% { opacity: 0; transform: translateX(10%); }
+  50% {
+    opacity: 0.1;
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(10%);
+  }
 }
 @keyframes poof {
-  50% { opacity: .1; }
-  100% { opacity: 0; transform: translateX(10%); }
+  50% {
+    opacity: 0.1;
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(10%);
+  }
 }
 
 #layers {
@@ -269,10 +305,10 @@ body.modal .mapboxgl-control-container {
   left: 0;
   width: 100%;
   padding: 12px;
-  background-color: rgba(0,0,0,.8);
+  background-color: rgba(0, 0, 0, 0.8);
   line-height: 1.4em;
-  transition: .3s transform ease-in-out;
-  box-shadow: 0 0 30px rgba(0,0,0,.5);
+  transition: 0.3s transform ease-in-out;
+  box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
   overflow: auto;
   -webkit-overflow-scrolling: touch;
 }
@@ -289,7 +325,7 @@ body.modal .mapboxgl-control-container {
   transform: translate3d(0, 100%, 0);
 }
 #layers h1 {
-  margin: 0 0 .5em;
+  margin: 0 0 0.5em;
   padding: 0;
   font-size: 1.5em;
 }
@@ -297,7 +333,7 @@ body.modal .mapboxgl-control-container {
   color: #fff;
 }
 #layers .pills {
-  border: 1px solid rgba(255,255,255,.8);
+  border: 1px solid rgba(255, 255, 255, 0.8);
   border-radius: 123123px;
   display: flex;
   margin: 0;
@@ -316,20 +352,20 @@ body.modal .mapboxgl-control-container {
   display: block;
   text-decoration: none;
   padding: 5px 10px;
-  border-left: 1px solid rgba(255,255,255,.8);
-  color: rgba(255,255,255,.8);
+  border-left: 1px solid rgba(255, 255, 255, 0.8);
+  color: rgba(255, 255, 255, 0.8);
   text-align: center;
-  font-size: .9em;
+  font-size: 0.9em;
 }
 #layers .pills li:first-of-type a {
   border-left: 0;
 }
 #layers .pills a:hover {
   color: #fff;
-  background-color: rgba(255,255,255,.2);
+  background-color: rgba(255, 255, 255, 0.2);
 }
 #layers .pills a:active {
-  background-color: rgba(255,255,255,.4);
+  background-color: rgba(255, 255, 255, 0.4);
 }
 #layers .pills a.selected {
   color: #000;
@@ -348,7 +384,11 @@ body.modal .mapboxgl-control-container {
   -webkit-overflow-scrolling: touch;
   border-radius: 10px;
   padding: 4px;
-  background: linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,.1));
+  background: linear-gradient(
+    to bottom,
+    rgba(255, 255, 255, 0),
+    rgba(255, 255, 255, 0.1)
+  );
 }
 #layers .legend.selected {
   display: block;
@@ -362,13 +402,13 @@ body.modal .mapboxgl-control-container {
 #layers .gradient {
   background-origin: border-box !important;
   border-radius: 123123px;
-  border: 3px solid rgba(0,0,0,.6);
+  border: 3px solid rgba(0, 0, 0, 0.6);
   width: 100%;
   height: 14px;
   margin: 2px 0;
 }
 #layers .info {
-  opacity: .7;
+  opacity: 0.7;
 }
 #layers .label-left {
   float: left;
@@ -381,14 +421,14 @@ body.modal .mapboxgl-control-container {
   text-align: center;
   margin-top: 5px;
   padding: 5px 8px;
-  background-color: rgba(255,255,255,.1);
+  background-color: rgba(255, 255, 255, 0.1);
   border-radius: 7px;
 }
 #layers .global-legend > span {
   display: inline-block;
-  margin-right: .5em;
+  margin-right: 0.5em;
   font-size: 20px;
-  zoom: .5;
+  zoom: 0.5;
 }
 #layers .global-legend img {
   vertical-align: -5px;
@@ -396,16 +436,16 @@ body.modal .mapboxgl-control-container {
 #layers .attribution {
   color: slategray;
   padding-top: 5px;
-  font-size: .8em;
+  font-size: 0.8em;
 }
 #layers .attribution a {
-  color: rgba(255,255,255,.7);
+  color: rgba(255, 255, 255, 0.7);
   display: inline-block;
   text-decoration: none;
-  border-bottom: 1px solid rgba(255,255,255,.3);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.3);
 }
 #layers .attribution a:hover {
-  border-color: rgba(255,255,255,.7);
+  border-color: rgba(255, 255, 255, 0.7);
 }
 
 #card {
@@ -415,10 +455,10 @@ body.modal .mapboxgl-control-container {
   bottom: 0;
   width: 100%;
   color: #fff;
-  background-color: rgba(0,0,0,.85);
+  background-color: rgba(0, 0, 0, 0.85);
   padding: 12px;
-  transition: .3s all ease-in-out;
-  box-shadow: 0 0 30px rgba(0,0,0,.5);
+  transition: 0.3s all ease-in-out;
+  box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
   z-index: 100;
   overflow: auto;
   -webkit-overflow-scrolling: touch;
@@ -451,8 +491,8 @@ body.modal .mapboxgl-control-container {
 #card.selected .close {
   display: block;
 }
-body.modal #card{
-  opacity: .2;
+body.modal #card {
+  opacity: 0.2;
 }
 #card .img {
   display: inline-block;
@@ -464,9 +504,9 @@ body.modal #card{
   padding-bottom: 37.5%;
   margin: 8px 0;
   border-radius: 6px;
-  transition: .3s filter ease-in-out;
+  transition: 0.3s filter ease-in-out;
 }
-#card a:hover .img{
+#card a:hover .img {
   filter: none;
 }
 #card h1 {
@@ -480,7 +520,7 @@ body.modal #card{
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  margin-bottom: .25em;
+  margin-bottom: 0.25em;
 }
 #card .common b {
   color: #fff;
@@ -493,8 +533,8 @@ body.modal #card{
   clear: both;
   width: 100%;
   border: 0;
-  border-top: 1px solid rgba(255,255,255,.2);
-  margin: .5em 0 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.2);
+  margin: 0.5em 0 0;
   border-spacing: 0;
 }
 #card thead th {
@@ -507,7 +547,7 @@ body.modal #card{
 #card tbody td {
   font-family: monospace;
   font-weight: bold;
-  padding-right: .5em;
+  padding-right: 0.5em;
   font-size: 12px;
 }
 #card .footer-buttons {
@@ -527,18 +567,18 @@ body.modal #card{
   margin-right: 10px;
 }
 #card .footer-buttons a:hover {
-  background-color: rgba(255,255,255,.1);
+  background-color: rgba(255, 255, 255, 0.1);
 }
 #card .footer-buttons a:active {
-  opacity: .5;
+  opacity: 0.5;
 }
 
 #legend-family .ib {
-  margin-right: .6em;
+  margin-right: 0.6em;
 }
 
 #rendering-mode {
-  opacity: .75;
+  opacity: 0.75;
   font-size: 10px;
   padding: 12px;
   margin: 6px -12px -12px;
@@ -564,7 +604,8 @@ body.modal #card{
   }
 }
 
-@media (min-width: 416px) { /* 400 + 8 + 8 */
+@media (min-width: 416px) {
+  /* 400 + 8 + 8 */
   #card {
     right: 8px;
     max-width: 400px;
@@ -604,7 +645,7 @@ body.modal #card{
     height: auto;
   }
   #layers .legend.scrollable {
-    transition: max-height .3s .3s ease-in;
+    transition: max-height 0.3s 0.3s ease-in;
     min-height: 5em;
     max-height: 25vh;
   }
@@ -616,15 +657,17 @@ body.modal #card{
   }
 }
 
-@supports ((-webkit-backdrop-filter: blur(1px)) or (backdrop-filter: blur(1px))) {
+@supports (
+  (-webkit-backdrop-filter: blur(1px)) or (backdrop-filter: blur(1px))
+) {
   .mapboxgl-ctrl-group {
-    background-color: rgba(255,255,255,.5);
+    background-color: rgba(255, 255, 255, 0.5);
     -webkit-backdrop-filter: blur(10px) saturate(3);
     backdrop-filter: blur(10px) saturate(3);
   }
   #layers,
   #card {
-    background-color: rgba(0,0,0,.3);
+    background-color: rgba(0, 0, 0, 0.3);
     -webkit-backdrop-filter: blur(20px) saturate(3);
     backdrop-filter: blur(20px) saturate(3);
   }

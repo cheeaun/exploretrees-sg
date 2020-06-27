@@ -10,14 +10,15 @@ import trainIconPath from './assets/train-icon.png';
 
 const speciesFamily = {};
 for (let family in familiesSpeciesData) {
-  familiesSpeciesData[family].forEach(s => speciesFamily[s] = family);
+  familiesSpeciesData[family].forEach((s) => (speciesFamily[s] = family));
 }
 
 const isTouch = 'ontouchstart' in window || navigator.msMaxTouchPoints;
 const hqHash = /#hq/.test(location.hash);
 const renderingMode = !hqHash && isTouch ? 'low' : 'high';
 
-if (renderingMode === 'low') document.getElementById('rendering-mode').hidden = false;
+if (renderingMode === 'low')
+  document.getElementById('rendering-mode').hidden = false;
 
 const distancePoints = (x1, y1, x2, y2) => {
   const dx = x1 - x2;
@@ -26,41 +27,56 @@ const distancePoints = (x1, y1, x2, y2) => {
 };
 
 // https://css-tricks.com/converting-color-spaces-in-javascript/
-function hexToRGB(h) { // Assume #123456
-  let r = 0, g = 0, b = 0;
+function hexToRGB(h) {
+  // Assume #123456
+  let r = 0,
+    g = 0,
+    b = 0;
   r = +('0x' + h[1] + h[2]);
   g = +('0x' + h[3] + h[4]);
   b = +('0x' + h[5] + h[6]);
   return [r, g, b];
-};
-function HSLToRGB(h,s,l) {
+}
+function HSLToRGB(h, s, l) {
   // Must be fractions of 1
   s /= 100;
   l /= 100;
   let c = (1 - Math.abs(2 * l - 1)) * s,
-      x = c * (1 - Math.abs((h / 60) % 2 - 1)),
-      m = l - c/2,
-      r = 0,
-      g = 0,
-      b = 0;
+    x = c * (1 - Math.abs(((h / 60) % 2) - 1)),
+    m = l - c / 2,
+    r = 0,
+    g = 0,
+    b = 0;
   if (0 <= h && h < 60) {
-    r = c; g = x; b = 0;
+    r = c;
+    g = x;
+    b = 0;
   } else if (60 <= h && h < 120) {
-    r = x; g = c; b = 0;
+    r = x;
+    g = c;
+    b = 0;
   } else if (120 <= h && h < 180) {
-    r = 0; g = c; b = x;
+    r = 0;
+    g = c;
+    b = x;
   } else if (180 <= h && h < 240) {
-    r = 0; g = x; b = c;
+    r = 0;
+    g = x;
+    b = c;
   } else if (240 <= h && h < 300) {
-    r = x; g = 0; b = c;
+    r = x;
+    g = 0;
+    b = c;
   } else if (300 <= h && h < 360) {
-    r = c; g = 0; b = x;
+    r = c;
+    g = 0;
+    b = x;
   }
   r = Math.round((r + m) * 255);
   g = Math.round((g + m) * 255);
   b = Math.round((b + m) * 255);
   return [r, g, b];
-};
+}
 
 // https://stackoverflow.com/a/47355187/20838
 const colorContext = document.createElement('canvas').getContext('2d');
@@ -78,32 +94,34 @@ const $card = document.getElementById('card');
 const $layersButton = document.getElementById('layers-button');
 const $layers = document.getElementById('layers');
 
-$layersButton.onclick = function(){
+$layersButton.onclick = function () {
   document.body.classList.toggle('modal');
   $layers.hidden = !$layers.hidden;
 };
 
-function closeLayers(){
+function closeLayers() {
   document.body.classList.remove('modal');
   $layers.hidden = true;
 }
 
 $modal.onclick = closeLayers;
 
-$layers.onclick = function(e){
-  if (e.target.className.toLowerCase() === 'close'){
+$layers.onclick = function (e) {
+  if (e.target.className.toLowerCase() === 'close') {
     closeLayers();
   }
-}
+};
 
-mapboxgl.accessToken = 'pk.eyJ1IjoiY2hlZWF1biIsImEiOiJjanF3azBrMjMwM2w1NDNyN3Yzc21saDUzIn0.jNWlsBO-S3uDKdfT9IKT1A';
+mapboxgl.accessToken =
+  'pk.eyJ1IjoiY2hlZWF1biIsImEiOiJjanF3azBrMjMwM2w1NDNyN3Yzc21saDUzIn0.jNWlsBO-S3uDKdfT9IKT1A';
 const mapBounds = [
-  [ 103.6016626883025, 1.233357600011331 ], // sw
-  [ 104.0381760444838, 1.473818072475055 ] // ne
+  [103.6016626883025, 1.233357600011331], // sw
+  [104.0381760444838, 1.473818072475055], // ne
 ];
-const map = window._map = new mapboxgl.Map({
+const map = (window._map = new mapboxgl.Map({
   container: 'map',
-  style: 'https://api.maptiler.com/maps/darkmatter/style.json?key=xjrAbdVfXA48AYcOS16e',
+  style:
+    'https://api.maptiler.com/maps/darkmatter/style.json?key=xjrAbdVfXA48AYcOS16e',
   // style: 'https://maps.gahmen.tech/styles/dark_matter/style.json',
   minZoom: 8,
   maxZoom: 20,
@@ -116,37 +134,49 @@ const map = window._map = new mapboxgl.Map({
   dragRotate: renderingMode === 'high',
   keyboard: renderingMode === 'high',
   fadeDuration: renderingMode === 'high' ? 300 : 0,
-});
+}));
 if (renderingMode === 'low') {
   map.touchZoomRotate.disableRotation();
   // map.on('error', (e) => alert(e));
 }
-map.addControl(new mapboxgl.GeolocateControl({
-  positionOptions: {
-    enableHighAccuracy: true,
-  },
-  trackUserLocation: true,
-}));
+map.addControl(
+  new mapboxgl.GeolocateControl({
+    positionOptions: {
+      enableHighAccuracy: true,
+    },
+    trackUserLocation: true,
+  }),
+);
 map.addControl(new mapboxgl.NavigationControl());
 
 let labelLayerId;
-let mapLoaded = new Promise((res, rej) => map.once('load', () => {
-  map.once('idle', () => {
-    document.getElementById('map').classList.add('loaded');
-  });
+let mapLoaded = new Promise((res, rej) =>
+  map.once('load', () => {
+    map.once('idle', () => {
+      document.getElementById('map').classList.add('loaded');
+    });
 
-  res();
-}));
+    res();
+  }),
+);
 
 map.once('styledata', () => {
   const layers = map.getStyle().layers;
   console.log(layers);
 
-  for (let i=0, l=layers.length; i<l; i++){
+  for (let i = 0, l = layers.length; i < l; i++) {
     const layer = layers[i];
-    if (!/water/i.test(layer.id) && layer.type === 'symbol' && layer.layout['text-field']) {
-      const opacity = Math.max(i / l - .1, .5);
-      map.setPaintProperty(layer.id, 'text-color', `rgba(255,255,255,${opacity})`);
+    if (
+      !/water/i.test(layer.id) &&
+      layer.type === 'symbol' &&
+      layer.layout['text-field']
+    ) {
+      const opacity = Math.max(i / l - 0.1, 0.5);
+      map.setPaintProperty(
+        layer.id,
+        'text-color',
+        `rgba(255,255,255,${opacity})`,
+      );
       map.setLayoutProperty(layer.id, 'text-transform', 'none');
       if (!labelLayerId) labelLayerId = layer.id;
     }
@@ -167,9 +197,13 @@ map.once('styledata', () => {
         'fill-extrusion-base': ['get', 'render_min_height'],
         'fill-extrusion-height': ['get', 'render_height'],
         'fill-extrusion-opacity': [
-          'interpolate', ['linear'], ['zoom'],
-          16, 0,
-          17, .2
+          'interpolate',
+          ['linear'],
+          ['zoom'],
+          16,
+          0,
+          17,
+          0.2,
         ],
       },
     });
@@ -179,48 +213,45 @@ map.once('styledata', () => {
     map.setPaintProperty('building', 'fill-antialias', false);
     map.setLayerZoomRange('building', 15, 21);
     map.setPaintProperty('building', 'fill-opacity', [
-      'interpolate', ['linear'], ['zoom'],
-      15, 0,
-      16, 1
+      'interpolate',
+      ['linear'],
+      ['zoom'],
+      15,
+      0,
+      16,
+      1,
     ]);
   }
 
   map.setPaintProperty('landcover_wood', 'fill-color', 'green');
-  map.setPaintProperty('landcover_wood', 'fill-opacity', .1);
+  map.setPaintProperty('landcover_wood', 'fill-opacity', 0.1);
   map.setPaintProperty('landcover_wood', 'fill-pattern', null);
   map.addLayer({
     id: 'landcover_grass',
     type: 'fill',
     source: 'openmaptiles',
     'source-layer': 'landcover',
-    filter: [
-      'all',
-      [
-        '==',
-        'class',
-        'grass'
-      ]
-    ],
+    filter: ['all', ['==', 'class', 'grass']],
     paint: {
       'fill-antialias': false,
       'fill-color': 'green',
-      'fill-opacity': .1,
+      'fill-opacity': 0.1,
     },
   });
 
   const poiStyles = {
     layout: {
       'icon-offset': [0, -4],
-      'icon-size': .5,
+      'icon-size': 0.5,
       'text-font': [
         'Metropolis Light',
-        'Noto Sans Regular'
+        'Noto Sans Regular',
         // 'Klokantech Noto Sans Regular'
       ],
       'text-max-width': 12,
       'text-variable-anchor': ['left', 'right', 'bottom', 'top'],
       'text-justify': 'auto',
-      'text-radial-offset': .9,
+      'text-radial-offset': 0.9,
       'text-padding': 1,
       'text-size': 11,
       'text-optional': true,
@@ -229,7 +260,7 @@ map.once('styledata', () => {
       'text-halo-blur': 1,
       'text-halo-width': 1,
     },
-  }
+  };
 
   map.loadImage(busIconPath, (e, img) => {
     map.addImage('bus', img);
@@ -244,9 +275,11 @@ map.once('styledata', () => {
     layout: {
       'icon-image': 'bus',
       'text-field': [
-        'step', ['zoom'],
+        'step',
+        ['zoom'],
         '',
-        17, ['concat', ['get', 'name:latin'], '\n', ['get', 'name:nonlatin']],
+        17,
+        ['concat', ['get', 'name:latin'], '\n', ['get', 'name:nonlatin']],
       ],
       ...poiStyles.layout,
     },
@@ -292,7 +325,7 @@ map.once('styledata', () => {
     buffer: 0,
     data: {
       type: 'FeatureCollection',
-      features: poisData.map(p => ({
+      features: poisData.map((p) => ({
         type: 'Feature',
         geometry: {
           type: 'Point',
@@ -312,20 +345,21 @@ map.once('styledata', () => {
     minzoom: 14,
     layout: {
       'icon-image': [
-        'match', ['get', 'type'],
-        'park', 'park',
-        'hroad', 'hroad',
-        'srgreenery', 'srgreenery',
-        'garden', 'garden',
-        'circle-11'
+        'match',
+        ['get', 'type'],
+        'park',
+        'park',
+        'hroad',
+        'hroad',
+        'srgreenery',
+        'srgreenery',
+        'garden',
+        'garden',
+        'circle-11',
       ],
       'text-allow-overlap': true,
       'text-ignore-placement': true,
-      'text-field': [
-        'step', ['zoom'],
-        '',
-        16, ['get', 'name'],
-      ],
+      'text-field': ['step', ['zoom'], '', 16, ['get', 'name']],
       ...poiStyles.layout,
     },
     paint: {
@@ -341,7 +375,7 @@ const fColors = [];
 const fColorsMap = {};
 const familiesCount = families.length;
 families.forEach((f, i) => {
-  const hue = i/familiesCount*300;
+  const hue = (i / familiesCount) * 300;
   const color = `hsl(${hue}, 100%, 50%)`;
   fColors.push(f, color);
   fColorsMap[f] = {
@@ -350,28 +384,53 @@ families.forEach((f, i) => {
   };
 });
 fColors.push('slategray');
-document.getElementById('legend-family').innerHTML = Object.keys(fColorsMap).map((f, i) => {
-  return `<span class="ib">
+document.getElementById('legend-family').innerHTML = Object.keys(fColorsMap)
+  .map((f, i) => {
+    return `<span class="ib">
     <span class="circle" style="background-color: ${fColorsMap[f].hslStr}" title="${i}"></span>
     ${f}
   </span>`;
-}).join('');
+  })
+  .join('');
 
 const markupCard = (d, selected) => html`
   <button type="button" class="close">×</button>
-  <h1>${d.name || (speciesData[d.species_id] || {}).name}
-    ${(!d.flowering && !d.heritage ? '🌱' : '')}
-    ${(d.flowering ? html`<span title="flowering">🌸</span>` : '')}
-    ${(d.heritage ? html`<span title="heritage">🌳</span>` : '')}
+  <h1>
+    ${d.name || (speciesData[d.species_id] || {}).name}
+    ${!d.flowering && !d.heritage ? '🌱' : ''}
+    ${d.flowering
+      ? html`
+          <span title="flowering">🌸</span>
+        `
+      : ''}
+    ${d.heritage
+      ? html`
+          <span title="heritage">🌳</span>
+        `
+      : ''}
   </h1>
   <div class="common ${selected ? 'expand' : ''}">
-    Family name: ${d.family ? (
-      html`<b>${d.family}</b> <span class="circle" style="background-color: ${d.familyColor ? d.familyColor.hslStr : fColorsMap[d.family]}"></span>`
-    ) : '-'}
-    ${selected ? html`
-      <br>
-      Common name: ${d.common_name || (speciesData[d.species_id] || {}).common_name || '-'}
-    ` : ''}
+    Family name:
+    ${d.family
+      ? html`
+          <b>${d.family}</b>
+          <span
+            class="circle"
+            style="background-color: ${d.familyColor
+              ? d.familyColor.hslStr
+              : fColorsMap[d.family]}"
+          ></span>
+        `
+      : '-'}
+    ${selected
+      ? html`
+          <br />
+          Common name:
+          ${d.common_name ||
+          (speciesData[d.species_id] || {}).common_name ||
+          '-'}
+        `
+      : ''}
   </div>
   <table>
     <thead>
@@ -391,16 +450,28 @@ const markupCard = (d, selected) => html`
       </tr>
     </tbody>
   </table>
-  ${selected ? html`
-    <div class="footer-buttons">
-      <a href="https://www.google.com/maps/search/?api=1&query=${d.position.slice(0, 2).reverse().join(',')}" target="_blank">
-        <span hidden class="show-m">🗺 Open in </span>Google Maps
-      </a>
-      <a href="https://florafaunaweb.nparks.gov.sg/Special-Pages/plant-detail-master.aspx?id=${d.species_id}" target="_blank">
-        🔍 Learn more
-      </a>
-    </div>
-  ` : ''}
+  ${selected
+    ? html`
+        <div class="footer-buttons">
+          <a
+            href="https://www.google.com/maps/search/?api=1&query=${d.position
+              .slice(0, 2)
+              .reverse()
+              .join(',')}"
+            target="_blank"
+          >
+            <span hidden class="show-m">🗺 Open in</span>
+            Google Maps
+          </a>
+          <a
+            href="https://florafaunaweb.nparks.gov.sg/Special-Pages/plant-detail-master.aspx?id=${d.species_id}"
+            target="_blank"
+          >
+            🔍 Learn more
+          </a>
+        </div>
+      `
+    : ''}
 `;
 const showTree = (d, selected = false) => {
   render(markupCard(d, selected), $card);
@@ -450,7 +521,6 @@ const flyToPosition = (lngLat) => {
 
 (async () => {
   if (renderingMode === 'low') {
-
     await mapLoaded;
 
     map.addSource('trees-source', {
@@ -463,29 +533,51 @@ const flyToPosition = (lngLat) => {
         paint: {
           'circle-color': [
             'case',
-            ['all', ['to-boolean', ['get', 'flowering']], ['to-boolean', ['get', 'heritage']]], 'magenta',
-            ['to-boolean', ['get', 'flowering']], 'orangered',
-            ['to-boolean', ['get', 'heritage']], 'aqua',
-            'green'
+            [
+              'all',
+              ['to-boolean', ['get', 'flowering']],
+              ['to-boolean', ['get', 'heritage']],
+            ],
+            'magenta',
+            ['to-boolean', ['get', 'flowering']],
+            'orangered',
+            ['to-boolean', ['get', 'heritage']],
+            'aqua',
+            'green',
           ],
           'circle-radius': [
-            'interpolate', ['linear'], ['zoom'],
-            8, .5,
-            14, ['case',
-              ['to-boolean', ['get', 'flowering']], 3,
-              ['to-boolean', ['get', 'heritage']], 3,
-              1.25
+            'interpolate',
+            ['linear'],
+            ['zoom'],
+            8,
+            0.5,
+            14,
+            [
+              'case',
+              ['to-boolean', ['get', 'flowering']],
+              3,
+              ['to-boolean', ['get', 'heritage']],
+              3,
+              1.25,
             ],
-            20, ['case',
-              ['to-boolean', ['get', 'flowering']], 10,
-              ['to-boolean', ['get', 'heritage']], 10,
-              6
-            ]
+            20,
+            [
+              'case',
+              ['to-boolean', ['get', 'flowering']],
+              10,
+              ['to-boolean', ['get', 'heritage']],
+              10,
+              6,
+            ],
           ],
           'circle-stroke-width': [
-            'interpolate', ['linear'], ['zoom'],
-            11, 0,
-            14, 1,
+            'interpolate',
+            ['linear'],
+            ['zoom'],
+            11,
+            0,
+            14,
+            1,
           ],
           'circle-stroke-color': 'rgba(0,0,0,.25)',
         },
@@ -493,87 +585,123 @@ const flyToPosition = (lngLat) => {
       girth: {
         paint: {
           'circle-color': [
-            'match', ['get', 'girth_size'],
-            'L', 'orangered',
-            'M', 'green',
-            'S', 'limegreen',
-            'XS', 'yellow',
+            'match',
+            ['get', 'girth_size'],
+            'L',
+            'orangered',
+            'M',
+            'green',
+            'S',
+            'limegreen',
+            'XS',
+            'yellow',
             'slategray',
           ],
           'circle-opacity': [
-            'match', ['get', 'girth_size'],
-            'L', 1,
-            'M', .78,
-            'S', .56,
-            'XS', .5,
-            .5,
+            'match',
+            ['get', 'girth_size'],
+            'L',
+            1,
+            'M',
+            0.78,
+            'S',
+            0.56,
+            'XS',
+            0.5,
+            0.5,
           ],
           'circle-radius': [
-            'interpolate', ['linear'], ['zoom'],
-            10, .5,
-            20, 5,
+            'interpolate',
+            ['linear'],
+            ['zoom'],
+            10,
+            0.5,
+            20,
+            5,
           ],
         },
       },
       age: {
         paint: {
           'circle-color': [
-            'interpolate', ['linear'], ['to-number', ['get', 'age'], 0],
-            0, 'slategray',
-            0.001, 'yellow',
-            10, 'orange',
-            20, 'lime',
-            30, 'orangered',
-            100, 'magenta'
+            'interpolate',
+            ['linear'],
+            ['to-number', ['get', 'age'], 0],
+            0,
+            'slategray',
+            0.001,
+            'yellow',
+            10,
+            'orange',
+            20,
+            'lime',
+            30,
+            'orangered',
+            100,
+            'magenta',
           ],
           'circle-opacity': [
-            'interpolate', ['linear'], ['to-number', ['get', 'age'], 0],
-            0, .25,
-            1, .5,
-            10, .6,
-            20, .78,
-            30, 1
+            'interpolate',
+            ['linear'],
+            ['to-number', ['get', 'age'], 0],
+            0,
+            0.25,
+            1,
+            0.5,
+            10,
+            0.6,
+            20,
+            0.78,
+            30,
+            1,
           ],
           'circle-radius': [
-            'interpolate', ['linear'], ['zoom'],
-            10, ['case',
+            'interpolate',
+            ['linear'],
+            ['zoom'],
+            10,
+            [
+              'case',
               ['>', ['to-number', ['get', 'age']], 30],
-                ['max', .5, ['min', 3, ['to-number', ['get', 'age']]]],
-              .5,
+              ['max', 0.5, ['min', 3, ['to-number', ['get', 'age']]]],
+              0.5,
             ],
-            20, 5,
+            20,
+            5,
           ],
-        }
+        },
       },
       family: {
         paint: {
-          'circle-color': [
-            'match',
-            ['to-string', ['get', 'family']]
-          ].concat(fColors),
-          'circle-opacity': [
-            'case',
-            ['to-boolean', ['get', 'family']], 1,
-            .5
-          ],
+          'circle-color': ['match', ['to-string', ['get', 'family']]].concat(
+            fColors,
+          ),
+          'circle-opacity': ['case', ['to-boolean', ['get', 'family']], 1, 0.5],
           'circle-radius': [
-            'interpolate', ['linear'], ['zoom'],
-            10, .5,
-            20, 5,
+            'interpolate',
+            ['linear'],
+            ['zoom'],
+            10,
+            0.5,
+            20,
+            5,
           ],
-        }
-      }
+        },
+      },
     };
 
-    map.addLayer({
-      id: 'trees',
-      type: 'circle',
-      source: 'trees-source',
-      'source-layer': 'trees',
-      layout: {
-        visibility: 'none',
+    map.addLayer(
+      {
+        id: 'trees',
+        type: 'circle',
+        source: 'trees-source',
+        'source-layer': 'trees',
+        layout: {
+          visibility: 'none',
+        },
       },
-    }, labelLayerId);
+      labelLayerId,
+    );
 
     map.addSource('highlight-tree', {
       type: 'geojson',
@@ -592,17 +720,26 @@ const flyToPosition = (lngLat) => {
       },
       paint: {
         'circle-color': [
-          'interpolate', ['linear'], ['zoom'],
-          0, 'rgba(255, 255, 255, .5)',
-          20, 'rgba(255, 255, 255, .1)'
+          'interpolate',
+          ['linear'],
+          ['zoom'],
+          0,
+          'rgba(255, 255, 255, .5)',
+          20,
+          'rgba(255, 255, 255, .1)',
         ],
         'circle-stroke-width': 3,
         'circle-stroke-color': 'dodgerblue',
         'circle-radius': [
-          'interpolate', ['linear'], ['zoom'],
-          0, 5,
-          14, 8,
-          24, 16
+          'interpolate',
+          ['linear'],
+          ['zoom'],
+          0,
+          5,
+          14,
+          8,
+          24,
+          16,
         ],
       },
     });
@@ -617,31 +754,34 @@ const flyToPosition = (lngLat) => {
           coordinates,
         },
       });
-    };
+    }
     hideHighlightTree = () => {
       map.setLayoutProperty('highlight-tree', 'visibility', 'none');
     };
 
-    window.onhashchange = function(){
+    window.onhashchange = function () {
       const hash = location.hash.slice(1);
       let filter = (hash.match(/^[^/]+/i) || ['type'])[0];
       let styles = layerStyles[filter];
       if (!styles) {
         filter = 'type';
         styles = layerStyles.type;
-      };
+      }
       const { paint } = styles;
-      for (let name in paint){
+      for (let name in paint) {
         map.setPaintProperty('trees', name, paint[name]);
-      };
+      }
       map.setLayoutProperty('trees', 'visibility', 'visible');
       const links = document.querySelectorAll('#layers a');
-      for (let i=0; i<links.length; i++){
+      for (let i = 0; i < links.length; i++) {
         const link = links[i];
-        link.classList.toggle('selected', link.innerText.toLowerCase() == filter);
+        link.classList.toggle(
+          'selected',
+          link.innerText.toLowerCase() == filter,
+        );
       }
       const legends = document.querySelectorAll('#layers .legend');
-      for (let i=0; i<legends.length; i++){
+      for (let i = 0; i < legends.length; i++) {
         const legend = legends[i];
         legend.classList.toggle('selected', legend.classList.contains(filter));
       }
@@ -654,7 +794,12 @@ const flyToPosition = (lngLat) => {
       if (selectedTree) {
         const { point } = e;
         const treePoint = map.project(selectedTree.position);
-        const distance = distancePoints(point.x, point.y, treePoint.x, treePoint.y);
+        const distance = distancePoints(
+          point.x,
+          point.y,
+          treePoint.x,
+          treePoint.y,
+        );
         if (distance > 30) {
           // If cursor click is far away from selected tree,
           // reset everything
@@ -669,17 +814,28 @@ const flyToPosition = (lngLat) => {
           feature = features[0];
         } else {
           const { x, y } = point;
-          features = map.queryRenderedFeatures([{
-            x: x - pointRange,
-            y: y - pointRange,
-          },{
-            x: x + pointRange,
-            y: y + pointRange,
-          }], { layers: ['trees'] });
+          features = map.queryRenderedFeatures(
+            [
+              {
+                x: x - pointRange,
+                y: y - pointRange,
+              },
+              {
+                x: x + pointRange,
+                y: y + pointRange,
+              },
+            ],
+            { layers: ['trees'] },
+          );
           let shortestDistance = Infinity;
-          features.forEach(f => {
+          features.forEach((f) => {
             const { coordinates } = f.geometry;
-            const distance = distancePoints(lngLat.lng, lngLat.lat, coordinates[0], coordinates[1]);
+            const distance = distancePoints(
+              lngLat.lng,
+              lngLat.lat,
+              coordinates[0],
+              coordinates[1],
+            );
             if (distance < shortestDistance) {
               shortestDistance = distance;
               feature = f;
@@ -689,7 +845,9 @@ const flyToPosition = (lngLat) => {
         // console.log(e, features);
         if (feature) {
           const { properties } = feature;
-          const position = properties.position = properties.position.split(',').map(Number);
+          const position = (properties.position = properties.position
+            .split(',')
+            .map(Number));
           highlightedTree = properties;
           showTree(highlightedTree);
           showHighlightTree(position);
@@ -709,7 +867,6 @@ const flyToPosition = (lngLat) => {
       hideHighlightTree();
       return true;
     });
-
   } else {
     const {
       MapboxLayer,
@@ -736,11 +893,11 @@ const flyToPosition = (lngLat) => {
       opacity: 1,
       radiusMinPixels: 10,
       getRadius: 3,
-      getFillColor: [26,128,227,50],
+      getFillColor: [26, 128, 227, 50],
       stroked: true,
       lineWidthUnits: 'pixels',
       getLineWidth: 3,
-      getLineColor: [26,128,227,255],
+      getLineColor: [26, 128, 227, 255],
     });
     function showHighlightTree(coordinates) {
       highlightPoint.position = coordinates;
@@ -748,7 +905,7 @@ const flyToPosition = (lngLat) => {
         visible: true,
         data: [highlightPoint],
       });
-    };
+    }
     hideHighlightTree = () => {
       highlightTreeLayer.setProps({
         visible: false,
@@ -766,7 +923,7 @@ const flyToPosition = (lngLat) => {
             <span>3D</span>
           </button>
         `;
-        container.onclick = function(){
+        container.onclick = function () {
           const pitch = map.getPitch();
           const zoom = map.getZoom();
           let nextPitch = 0;
@@ -790,19 +947,19 @@ const flyToPosition = (lngLat) => {
         const pitch = this._map.getPitch();
         const is3DMode = pitch > 5;
         this._container.classList.toggle('active', is3DMode);
-      }
+      };
       onRemove() {
         this._container.parentNode.removeChild(this._container);
         this._map.off('pitchend', this.onPitch);
         this._map = undefined;
       }
-    };
+    }
     map.addControl(new PitchControl(), 'top-right');
 
     console.time('data download and decode');
     const fetchTrees = fetch(treesDataPath)
-      .then(res => res.arrayBuffer())
-      .then(res => {
+      .then((res) => res.arrayBuffer())
+      .then((res) => {
         const response = msgpack.deserialize(new Uint8Array(res));
         console.timeEnd('data download and decode');
         console.time('data massage');
@@ -823,7 +980,8 @@ const flyToPosition = (lngLat) => {
           ] = p;
           const names = speciesData[species_id] || {};
           const family = speciesFamily[species_id] || null;
-          const elevation = (heritage || flowering) ? .3 : (age > 30) ? .2 : family ? .1 : 0;
+          const elevation =
+            heritage || flowering ? 0.3 : age > 30 ? 0.2 : family ? 0.1 : 0;
           metadata[id] = {
             tree_id,
             species_id,
@@ -853,23 +1011,23 @@ const flyToPosition = (lngLat) => {
       id: 'trees',
       type: ScatterplotLayer,
       opacity: 1,
-      radiusMinPixels: .1,
+      radiusMinPixels: 0.1,
       radiusMaxPixels: 5,
       lineWidthUnits: 'pixels',
       getLineWidth: 1,
-      getLineColor: [0,0,0,200],
+      getLineColor: [0, 0, 0, 200],
     });
 
     map.on('zoom', () => {
       const zoom = map.getZoom();
       treesLayer.setProps({
-        stroked: (zoom >= 16),
+        stroked: zoom >= 16,
       });
     });
 
     const layerStyles = {
       type: {
-        getRadius: (d) => (d.flowering || d.heritage) ? 100 : 3,
+        getRadius: (d) => (d.flowering || d.heritage ? 100 : 3),
         getFillColor: (d) => {
           if (d.flowering && d.heritage) return colorName2RGB('magenta');
           if (d.flowering) return colorName2RGB('orangered');
@@ -891,7 +1049,7 @@ const flyToPosition = (lngLat) => {
         },
       },
       age: {
-        getRadius: (d) => d.age > 30 ? Math.max(3, d.age) : 3,
+        getRadius: (d) => (d.age > 30 ? Math.max(3, d.age) : 3),
         getFillColor: ({ age }) => {
           if (age >= 100) return colorName2RGB('magenta');
           if (age > 30) return colorName2RGB('orangered');
@@ -903,7 +1061,10 @@ const flyToPosition = (lngLat) => {
       },
       family: {
         getRadius: 3,
-        getFillColor: ({ familyColor }) => familyColor ? familyColor.rgbArr : colorName2RGB('slategray').concat(128),
+        getFillColor: ({ familyColor }) =>
+          familyColor
+            ? familyColor.rgbArr
+            : colorName2RGB('slategray').concat(128),
       },
     };
 
@@ -911,7 +1072,10 @@ const flyToPosition = (lngLat) => {
       visible: false,
       id: 'trees-3d',
       type: SolidPolygonLayer,
-      getFillColor: (d) => d.crown ? colorName2RGB('green').concat(100) : colorName2RGB('saddlebrown').concat(128),
+      getFillColor: (d) =>
+        d.crown
+          ? colorName2RGB('green').concat(100)
+          : colorName2RGB('saddlebrown').concat(128),
       extruded: true,
       getElevation: (d) => d.elevation,
     });
@@ -924,10 +1088,10 @@ const flyToPosition = (lngLat) => {
       mesh: new SphereGeometry(),
       data: [],
       getColor: colorName2RGB('green').concat(100),
-      getTranslation: (d) => [0, 0, d.height_est * .75],
+      getTranslation: (d) => [0, 0, d.height_est * 0.75],
       getScale: (d) => {
-        const scale = d.height_est * .5;
-        return [scale * .8, scale * .8, scale * .9];
+        const scale = d.height_est * 0.5;
+        return [scale * 0.8, scale * 0.8, scale * 0.9];
       },
     });
 
@@ -936,12 +1100,13 @@ const flyToPosition = (lngLat) => {
       if (tree3DCache.has(id)) return tree3DCache.get(id);
       const { height_est: height, position } = d;
       const girth = parseFloat(d.girth.match(/[\d.]+[^\d.]?$/)[0], 10);
-      const steps = 6 + ((girth - 0.5) * 2) // girth: from 0.5 to 1.5
-      const trunkRadius = girth / Math.PI * 2;
-      const trunkPolygon = circle(position, trunkRadius/1000, { steps }).geometry.coordinates;
+      const steps = 6 + (girth - 0.5) * 2; // girth: from 0.5 to 1.5
+      const trunkRadius = (girth / Math.PI) * 2;
+      const trunkPolygon = circle(position, trunkRadius / 1000, { steps })
+        .geometry.coordinates;
       const trunk = {
         polygon: trunkPolygon,
-        elevation: height * .75, // let the trunk "goes into" the crown a bit
+        elevation: height * 0.75, // let the trunk "goes into" the crown a bit
       };
       // const crownRadius = height * .4;
       // const crownPolygon = circle(position, crownRadius/1000, { steps: steps * 2 }).geometry.coordinates[0];
@@ -957,7 +1122,7 @@ const flyToPosition = (lngLat) => {
     };
     const trees3Dify = (data, metadata) => {
       const finalData = [];
-      data.forEach(d => {
+      data.forEach((d) => {
         finalData.push(...tree3Dify(d.id, { ...d, ...metadata[d.id] }));
       });
       return finalData;
@@ -972,38 +1137,55 @@ const flyToPosition = (lngLat) => {
     treesLayer.setProps({ data });
     map.addLayer(treesLayer, labelLayerId);
 
-    document.getElementById('total-trees').innerHTML = data.length.toLocaleString();
-    document.getElementById('total-flowering').innerHTML = data.filter(d => d.flowering).length.toLocaleString();
-    document.getElementById('total-heritage').innerHTML = data.filter(d => d.heritage).length.toLocaleString();
+    document.getElementById(
+      'total-trees',
+    ).innerHTML = data.length.toLocaleString();
+    document.getElementById('total-flowering').innerHTML = data
+      .filter((d) => d.flowering)
+      .length.toLocaleString();
+    document.getElementById('total-heritage').innerHTML = data
+      .filter((d) => d.heritage)
+      .length.toLocaleString();
 
-    window.onhashchange = function(){
+    window.onhashchange = function () {
       const hash = location.hash.slice(1);
       let filter = (hash.match(/^[^/]+/i) || ['type'])[0];
       let styles = layerStyles[filter];
       if (!styles) {
         filter = 'type';
         styles = layerStyles.type;
-      };
+      }
       treesLayer.setProps({
         ...styles,
         updateTriggers: styles,
       });
       const links = document.querySelectorAll('#layers a');
-      for (let i=0; i<links.length; i++){
+      for (let i = 0; i < links.length; i++) {
         const link = links[i];
-        link.classList.toggle('selected', link.innerText.toLowerCase() == filter);
+        link.classList.toggle(
+          'selected',
+          link.innerText.toLowerCase() == filter,
+        );
       }
       const legends = document.querySelectorAll('#layers .legend');
-      for (let i=0; i<legends.length; i++){
+      for (let i = 0; i < legends.length; i++) {
         const legend = legends[i];
         legend.classList.toggle('selected', legend.classList.contains(filter));
       }
     };
     window.onhashchange();
 
-    const index = new KDBush(data, (p) => p.position[0], (p) => p.position[1]);
-    const data3D = data.filter(d => !!d.girth_size && !!d.height_est);
-    const index3D = new KDBush(data3D, (p) => p.position[0], (p) => p.position[1]);
+    const index = new KDBush(
+      data,
+      (p) => p.position[0],
+      (p) => p.position[1],
+    );
+    const data3D = data.filter((d) => !!d.girth_size && !!d.height_est);
+    const index3D = new KDBush(
+      data3D,
+      (p) => p.position[0],
+      (p) => p.position[1],
+    );
 
     const throttledDrag = throttle(() => {
       if (selectedTree) return;
@@ -1024,13 +1206,20 @@ const flyToPosition = (lngLat) => {
     // Zoom 12 - 20: decreasing to within 10 meters (0.01 km)
     const zoomMin = 12;
     const zoomRange = 20 - zoomMin;
-    const radiusMin = .1;
-    const radiusRange = .01 - radiusMin;
-    const getRadiusByZoom = (zoom) => (((zoom - zoomMin) * radiusRange) / zoomRange) + radiusMin;
+    const radiusMin = 0.1;
+    const radiusRange = 0.01 - radiusMin;
+    const getRadiusByZoom = (zoom) =>
+      ((zoom - zoomMin) * radiusRange) / zoomRange + radiusMin;
     const getNearestTree = (point) => {
       const zoom = map.getZoom();
-      const radius = zoom <= zoomMin ? .1 : getRadiusByZoom(zoom);
-      const nearestPoints = geokdbush.around(isTree3DMode() ? index3D : index, point.lng, point.lat, 1, radius);
+      const radius = zoom <= zoomMin ? 0.1 : getRadiusByZoom(zoom);
+      const nearestPoints = geokdbush.around(
+        isTree3DMode() ? index3D : index,
+        point.lng,
+        point.lat,
+        1,
+        radius,
+      );
       if (nearestPoints && nearestPoints.length) {
         const nearestPoint = nearestPoints[0];
         return {
@@ -1061,7 +1250,12 @@ const flyToPosition = (lngLat) => {
       if (selectedTree) {
         const { point } = e;
         const treePoint = map.project(selectedTree.position);
-        const distance = distancePoints(point.x, point.y, treePoint.x, treePoint.y);
+        const distance = distancePoints(
+          point.x,
+          point.y,
+          treePoint.x,
+          treePoint.y,
+        );
         if (distance > 30) {
           // If cursor click is far away from selected tree,
           // reset everything
@@ -1096,15 +1290,33 @@ const flyToPosition = (lngLat) => {
 
     // Modified from https://observablehq.com/@mourner/sun-position-in-900-bytes
     const getSunAzimuth = (date, lng, lat) => {
-      const {sin, cos, asin, atan2, PI} = Math,
-            r = PI / 180, t = date / 315576e7 - 0.3,
-            m = r * (357.52911 + t * (35999.05029 - t * 1537e-7)), c = cos(r * (125.04 - 1934.136 * t)),
-            l = r * (280.46646 + t * (36000.76983 + t * 3032e-7) + (1.914602 - t * (4817e-6 - t * 14e-6)) * sin(m) -
-                     569e-5 - 478e-5 * c) + (0.019993 - 101e-6 * t) * sin(2 * m) + 289e-6 * sin(3 * m),
-            e = r * (84381.448 - t * (46.815 - t * (59e-5 + 1813e-6 * t))) / 3600 + r * 256e-5 * c,
-            sl = sin(l), cr = cos(r * lat), sr = sin(r * lat), d = asin(sin(e) * sl),
-            h = r * (280.46061837 + 13184999.8983375 * t + lng) - atan2(cos(e) * sl, cos(l)),
-            sd = sin(d), cd = cos(d), ch = cos(h);
+      const { sin, cos, asin, atan2, PI } = Math,
+        r = PI / 180,
+        t = date / 315576e7 - 0.3,
+        m = r * (357.52911 + t * (35999.05029 - t * 1537e-7)),
+        c = cos(r * (125.04 - 1934.136 * t)),
+        l =
+          r *
+            (280.46646 +
+              t * (36000.76983 + t * 3032e-7) +
+              (1.914602 - t * (4817e-6 - t * 14e-6)) * sin(m) -
+              569e-5 -
+              478e-5 * c) +
+          (0.019993 - 101e-6 * t) * sin(2 * m) +
+          289e-6 * sin(3 * m),
+        e =
+          (r * (84381.448 - t * (46.815 - t * (59e-5 + 1813e-6 * t)))) / 3600 +
+          r * 256e-5 * c,
+        sl = sin(l),
+        cr = cos(r * lat),
+        sr = sin(r * lat),
+        d = asin(sin(e) * sl),
+        h =
+          r * (280.46061837 + 13184999.8983375 * t + lng) -
+          atan2(cos(e) * sl, cos(l)),
+        sd = sin(d),
+        cd = cos(d),
+        ch = cos(h);
       return asin(sr * sd + cr * cd * ch);
     };
     const getPhaseColor = (timestamp) => {
@@ -1113,25 +1325,25 @@ const flyToPosition = (lngLat) => {
       const h = d * altitude;
       return h < -0.833 ? 'dark' : 'bright';
     };
-    const setLighting = window._setLighting = (timestamp) => {
+    const setLighting = (window._setLighting = (timestamp) => {
       const phaseColor = getPhaseColor(timestamp);
       const ambientLight = new AmbientLight({
         intensity: phaseColor === 'dark' ? 1 : 1.5,
       });
       const sunLight = new SunLight({
         timestamp,
-        intensity: phaseColor === 'dark' ? .5 : 2,
-      });;
+        intensity: phaseColor === 'dark' ? 0.5 : 2,
+      });
       const lightingEffect = new LightingEffect({ ambientLight, sunLight });
       treesCrownLayer.deck.setProps({
         effects: [lightingEffect],
       });
-    };
+    });
     setLighting(+new Date());
     setInterval(() => {
       console.log('Update sun light');
       setLighting(+new Date());
-    }, 10*60*1000); // Update sun light 10 mins
+    }, 10 * 60 * 1000); // Update sun light 10 mins
 
     let renderRAF;
     const renderTrees = throttle(() => {
@@ -1139,7 +1351,9 @@ const flyToPosition = (lngLat) => {
       renderRAF = requestAnimationFrame(() => {
         if (isTree3DMode()) {
           const bounds = map.getBounds();
-          let results = index3D.range(...bounds.toArray().flat()).map(id => data3D[id]);
+          let results = index3D
+            .range(...bounds.toArray().flat())
+            .map((id) => data3D[id]);
           // Min: 1000, Max: 10000 3D trees
           if (results.length < 1000) {
             const center = map.getCenter();
@@ -1175,7 +1389,6 @@ const flyToPosition = (lngLat) => {
       });
     }, 1000);
     map.on('move', renderTrees);
-
   }
 })();
 
@@ -1185,23 +1398,24 @@ const flyToPosition = (lngLat) => {
 if (/touch\-demo/i.test(location.hash)) {
   const pointers = [];
   pointers[0] = document.createElement('div');
-  pointers[0].style = 'background-color: rgba(220,220,220,.3); border: 10px solid rgba(5,5,5,.3); width: 100px; height: 100px; border-radius: 123123px; margin: -50px 0 0 -50px; position: absolute; left: 0; top: 0; pointer-events: none;';
+  pointers[0].style =
+    'background-color: rgba(220,220,220,.3); border: 10px solid rgba(5,5,5,.3); width: 100px; height: 100px; border-radius: 123123px; margin: -50px 0 0 -50px; position: absolute; left: 0; top: 0; pointer-events: none;';
   pointers[0].hidden = true;
   pointers[1] = pointers[0].cloneNode();
-  pointers.forEach(p => document.body.appendChild(p));
+  pointers.forEach((p) => document.body.appendChild(p));
 
-  document.body.ontouchstart =
-    document.body.ontouchend =
-    document.body.ontouchmove =
-    document.body.ontouchcancel =
-    (e) => {
-      requestAnimationFrame(() => {
-        pointers.forEach(p => p.hidden = true);
-        [...e.touches].forEach((touch, i) => {
-          if (i >= 2) return;
-          pointers[i].style.transform = `translate(${touch.clientX}px, ${touch.clientY}px)`;
-          pointers[i].hidden = false;
-        });
+  document.body.ontouchstart = document.body.ontouchend = document.body.ontouchmove = document.body.ontouchcancel = (
+    e,
+  ) => {
+    requestAnimationFrame(() => {
+      pointers.forEach((p) => (p.hidden = true));
+      [...e.touches].forEach((touch, i) => {
+        if (i >= 2) return;
+        pointers[
+          i
+        ].style.transform = `translate(${touch.clientX}px, ${touch.clientY}px)`;
+        pointers[i].hidden = false;
       });
-    };
+    });
+  };
 }
