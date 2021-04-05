@@ -1131,6 +1131,32 @@ const flyToPosition = (lngLat) => {
 
     await mapLoaded;
 
+    // Too bad Singapore is not hilly enough
+    // map.addSource('mapbox-dem', {
+    //   type: 'raster-dem',
+    //   url: 'mapbox://mapbox.mapbox-terrain-dem-v1',
+    //   tileSize: 512,
+    //   maxzoom: 14,
+    // });
+    // map.setTerrain({ source: 'mapbox-dem', exaggeration: 10 });
+
+    map.addLayer({
+      id: 'sky',
+      type: 'sky',
+      paint: {
+        'sky-type': 'gradient',
+        'sky-gradient': [
+          'interpolate',
+          ['linear'],
+          ['sky-radial-progress'],
+          0.8,
+          '#040613',
+          1,
+          '#16326a',
+        ],
+      },
+    });
+
     map.addLayer(highlightTreeLayer);
 
     const [data, metadata] = await fetchTrees;
