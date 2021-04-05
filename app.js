@@ -928,7 +928,7 @@ const flyToPosition = (lngLat) => {
           const pitch = map.getPitch();
           const zoom = map.getZoom();
           let nextPitch = 0;
-          if (pitch <= 5) nextPitch = 60;
+          if (pitch <= 5) nextPitch = 80;
           if (zoom < 17 && pitch < 5) {
             map.flyTo({
               pitch: nextPitch,
