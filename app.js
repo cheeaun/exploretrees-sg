@@ -1415,7 +1415,7 @@ const flyToPosition = (lngLat) => {
         }
       });
     }, 1000);
-    map.on('move', renderTrees);
+    map.on('moveend', renderTrees);
   }
 })();
 
