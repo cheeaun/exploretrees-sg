@@ -1,0 +1,19 @@
+@import 'https://api.tiles.mapbox.com/mapbox-gl-js/v2.5.0/mapbox-gl.css';
+
+* {
+  box-sizing: border-box;
+}
+html,
+body {
+  overflow: hidden;
+  margin: 0;
+  padding: 0;
+  text-size-adjust: none;
+}
+
+#map {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 100%;
+}
