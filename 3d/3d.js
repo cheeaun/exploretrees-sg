@@ -21,10 +21,6 @@ for (let family in familiesSpeciesData) {
 const ACCESS_TOKEN =
   'pk.eyJ1IjoiY2hlZWF1biIsImEiOiJjanF3azBrMjMwM2w1NDNyN3Yzc21saDUzIn0.jNWlsBO-S3uDKdfT9IKT1A';
 mapboxgl.accessToken = ACCESS_TOKEN;
-const mapBounds = [
-  [103.6016626883025, 1.233357600011331], // sw
-  [104.0381760444838, 1.473818072475055], // ne
-];
 const map = (window._map = new mapboxgl.Map({
   container: 'map',
   style: 'mapbox://styles/cheeaun/ckpoxzt7o076k17rqq7jrowxg/draft',
@@ -40,7 +36,30 @@ const map = (window._map = new mapboxgl.Map({
 }));
 map.addControl(new mapboxgl.NavigationControl());
 
-const treesTrunkCache = new Map();
+const treesCache = new Map();
+const cleaningData = (d) => {
+  const { id, girth: _girth, height_est } = d.properties;
+  if (treesCache.has(id)) return treesCache.get(id);
+  const position = d.geometry.coordinates;
+  const girth = parseFloat((_girth || '0.5').match(/[\d.]+[^\d.]?$/)[0], 10);
+  const steps = 6 + (girth - 0.5) * 2; // girth: from 0.5 to 1.5
+  const trunkRadius = (girth / Math.PI) * 2;
+  const trunkPolygon = circle(position, trunkRadius / 1000, { steps }).geometry
+    .coordinates;
+  const scale = height_est * 0.66;
+  const newD = {
+    id,
+    position,
+    polygon: trunkPolygon,
+    elevation: height_est * 0.75,
+    translation: [0, 0, height_est * 0.6],
+    scale: [scale * 0.1, scale * 0.1, scale * 0.135],
+    orientation: [0, (id.slice(-1) / 9) * 180, 0],
+  };
+  treesCache.set(id, newD);
+  return newD;
+};
+
 const treesMVTLayer = new MapboxLayer({
   id: 'trees-mvt',
   type: MVTLayer,
@@ -48,53 +67,32 @@ const treesMVTLayer = new MapboxLayer({
   minZoom: 17,
   maxZoom: 22,
   renderSubLayers: (props) => {
-    const data = props.data
-      .filter((d) => d.geometry.coordinates.every((c) => c > 0))
+    // console.log(props.tile.dataInWGS84.length);
+    const data = props.tile.dataInWGS84
+      .filter((d) => !!d.properties.girth_size && !!d.properties.height_est)
       .sort((a, b) => b.geometry.coordinates[1] - a.geometry.coordinates[1])
       .slice(0, 300);
     // console.log(props.data.length, data.length, props);
+
+    const cleanData = data.map(cleaningData);
+
     return [
       new SolidPolygonLayer({
         id: props.id + '-trunk',
-        data,
+        data: cleanData,
         getFillColor: [219, 195, 154],
         extruded: true,
-        getPolygon: (d) => {
-          const id = d.properties.id;
-          if (treesTrunkCache.has(id)) return treesTrunkCache.get(id);
-          const position = d.properties.position.split(',').map(Number);
-          const girth = parseFloat(
-            (d.properties.girth || '0.5').match(/[\d.]+[^\d.]?$/)[0],
-            10,
-          );
-          const steps = 6 + (girth - 0.5) * 2; // girth: from 0.5 to 1.5
-          const trunkRadius = (girth / Math.PI) * 2;
-          const trunkPolygon = circle(position, trunkRadius / 1000, { steps })
-            .geometry.coordinates;
-          treesTrunkCache.set(id, trunkPolygon);
-          return trunkPolygon;
-        },
-        getElevation: (d) => d.properties.height_est * 0.75,
+        getElevation: (d) => d.elevation,
       }),
       new SimpleMeshLayer({
         id: props.id + '-crown',
-        data,
+        data: cleanData,
         mesh: crownOBJPath,
         loaders: [OBJLoader],
         getColor: [175, 216, 142],
-        getPosition: (d) => {
-          const position = d.properties.position.split(',').map(Number);
-          return position;
-        },
-        getTranslation: (d) => [0, 0, d.properties.height_est * 0.6],
-        getScale: (d) => {
-          const scale = d.properties.height_est * 0.66;
-          return [scale * 0.1, scale * 0.1, scale * 0.135];
-        },
-        getOrientation: (d) => {
-          const o = d.properties.id.slice(-1) / 9;
-          return [0, o * 180, 0];
-        },
+        getTranslation: (d) => d.translation,
+        getScale: (d) => d.scale,
+        getOrientation: (d) => d.orientation,
       }),
     ];
   },
