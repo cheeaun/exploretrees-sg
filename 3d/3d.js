@@ -15,12 +15,9 @@ const ACCESS_TOKEN =
 mapboxgl.accessToken = ACCESS_TOKEN;
 const map = (window._map = new mapboxgl.Map({
   container: 'map',
-  style: 'mapbox://styles/cheeaun/ckpoxzt7o076k17rqq7jrowxg/draft',
+  style: 'mapbox://styles/cheeaun/ckpoxzt7o076k17rqq7jrowxg',
   minZoom: 8,
   renderWorldCopies: false,
-  boxZoom: false,
-  attributionControl: false,
-  // bounds: mapBounds,
   hash: true,
   center: [103.84708968044379, 1.2928590602954841],
   pitch: 65,
