@@ -60,7 +60,7 @@ const treesMVTLayer = new MapboxLayer({
     const data = props.tile.dataInWGS84
       .filter((d) => !!d.properties.girth_size && !!d.properties.height_est)
       .sort((a, b) => b.geometry.coordinates[1] - a.geometry.coordinates[1])
-      .slice(0, 300);
+      .slice(0, 300); // This is a performance hack, reducing the number of trees per tile
     // console.log(props.data.length, data.length, props);
 
     const cleanData = data.map(cleaningData);
