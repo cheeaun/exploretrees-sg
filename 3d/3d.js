@@ -86,10 +86,10 @@ const treesMVTLayer = new MapboxLayer({
           const position = d.properties.position.split(',').map(Number);
           return position;
         },
-        getTranslation: (d) => [0, 0, d.properties.height_est * 0.75],
+        getTranslation: (d) => [0, 0, d.properties.height_est * 0.6],
         getScale: (d) => {
-          const scale = d.properties.height_est * 0.15;
-          return [scale * 0.5, scale * 0.5, scale * 0.9];
+          const scale = d.properties.height_est * 0.66;
+          return [scale * 0.1, scale * 0.1, scale * 0.135];
         },
         getOrientation: (d) => {
           const o = d.properties.id.slice(-1) / 9;
