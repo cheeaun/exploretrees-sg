@@ -175,13 +175,7 @@ map.once('load', async () => {
   map.on('moveend', debouncedRenderTrees);
   map.once('idle', renderTrees);
 
-  const debouncedResize = debounce(() => {
-    const { innerWidth: w, innerHeight: h } = window;
-    const circlePadding = Math.ceil(Math.sqrt(w * w + h * h) / 200);
-    map.setLayoutProperty('trees', 'icon-padding', circlePadding);
-
-    requestAnimationFrame(renderTrees);
-  }, 1000);
+  const debouncedResize = debounce(renderTrees, 1000);
   map.on('resize', debouncedResize);
 
   treesCrownLayer.deck.setProps({
