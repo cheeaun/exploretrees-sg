@@ -6,9 +6,7 @@ import SolidPolygonLayer from '@deck.gl/layers/dist/esm/solid-polygon-layer/soli
 import SimpleMeshLayer from '@deck.gl/mesh-layers/dist/esm/simple-mesh-layer/simple-mesh-layer';
 import { OBJLoader } from '@loaders.gl/obj';
 import circle from '@turf/circle';
-import debounce from 'just-debounce-it';
 
-import dotPath from '../assets/dot.png';
 import crownOBJPath from '../assets/crown.obj';
 
 const ACCESS_TOKEN =
@@ -88,7 +86,7 @@ const lightingEffect = new LightingEffect({
   directionalLight,
 });
 
-map.once('load', async () => {
+map.once('styledata', () => {
   map.addLayer(treesTrunkLayer, 'building-extrusion-2');
   map.setLayerZoomRange('trees-trunk', 15, 22.1);
   map.addLayer(treesCrownLayer, 'building-extrusion-2');
@@ -99,24 +97,15 @@ map.once('load', async () => {
     url: 'mapbox://cheeaun.bptkspgy',
   });
 
-  map.loadImage(dotPath, (e, image) => {
-    map.addImage('dot', image);
-  });
-
   map.addLayer({
     id: 'trees',
-    type: 'symbol',
+    type: 'circle',
     source: 'trees-source',
     'source-layer': 'trees',
+    filter: ['all', ['has', 'girth_size'], ['has', 'height_est']],
     minzoom: 15,
-    layout: {
-      'icon-image': 'dot',
-      // 'icon-padding': 1,
-      'icon-ignore-placement': true,
-      'icon-allow-overlap': true,
-    },
     paint: {
-      'icon-opacity': 0,
+      'circle-radius': 0,
     },
   });
 
@@ -133,19 +122,25 @@ map.once('load', async () => {
     const height =
       ((zoom - minZoom) / (maxZoom - minZoom)) * (maxHeight - minHeight) +
       minHeight;
-    const trees = map.queryRenderedFeatures({
-      filter: [
-        'all',
-        ['has', 'girth_size'],
-        ['has', 'height_est'],
-        ['>', 'height_est', height],
-      ],
+
+    // Pitch 0 - 60: show all trees
+    // Pitch 85: cut off query region from top 50%
+    const { innerHeight, innerWidth } = window;
+    const pitch = map.getPitch();
+    const top = pitch > 60 ? ((pitch - 60) / 25) * (innerWidth / 2) : 0;
+    const geometry = [
+      [0, innerHeight], // bottom left
+      [innerWidth, top], // top right
+    ];
+
+    const trees = map.queryRenderedFeatures(geometry, {
+      filter: ['>', 'height_est', height],
       layers: ['trees'],
       validate: false,
     });
 
     // DEBUGGING
-    // console.log(trees.length, trees);
+    console.log('🌳', trees.length);
     // const treesHeight = {};
     // trees.forEach((d) => {
     //   const { height_est } = d.properties;
@@ -157,26 +152,17 @@ map.once('load', async () => {
     // console.log(treesHeight);
 
     requestAnimationFrame(() => {
-      // Sort trees by height and reduce the amount
-      const sortedTrees = trees
-        .sort((a, b) => {
-          return b.properties.height_est - a.properties.height_est;
-        })
-        .slice(0, 500);
-
-      const cleanData = sortedTrees.map(cleaningData);
+      const cleanData = trees.map(cleaningData);
 
       treesTrunkLayer.setProps({ data: cleanData });
       treesCrownLayer.setProps({ data: cleanData });
     });
   };
-  const debouncedRenderTrees = debounce(renderTrees, 500);
 
-  map.on('moveend', debouncedRenderTrees);
+  map.on('moveend', renderTrees);
   map.once('idle', renderTrees);
 
-  const debouncedResize = debounce(renderTrees, 1000);
-  map.on('resize', debouncedResize);
+  map.on('resize', renderTrees);
 
   treesCrownLayer.deck.setProps({
     effects: [lightingEffect],
