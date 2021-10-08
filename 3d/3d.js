@@ -4,10 +4,10 @@ import { DirectionalLight } from '@deck.gl/core/dist/esm/effects/lighting/direct
 import LightingEffect from '@deck.gl/core/dist/esm/effects/lighting/lighting-effect';
 import SolidPolygonLayer from '@deck.gl/layers/dist/esm/solid-polygon-layer/solid-polygon-layer';
 import SimpleMeshLayer from '@deck.gl/mesh-layers/dist/esm/simple-mesh-layer/simple-mesh-layer';
-import { OBJLoader } from '@loaders.gl/obj';
 import circle from '@turf/circle';
 
-import crownOBJPath from '../assets/crown.obj';
+import { DracoLoader } from '@loaders.gl/draco';
+import crownDRCPath from '../assets/crown.drc';
 
 const ACCESS_TOKEN =
   'pk.eyJ1IjoiY2hlZWF1biIsImEiOiJjanF3azBrMjMwM2w1NDNyN3Yzc21saDUzIn0.jNWlsBO-S3uDKdfT9IKT1A';
@@ -65,8 +65,8 @@ const treesCrownLayer = new MapboxLayer({
   id: 'trees-crown',
   type: SimpleMeshLayer,
   // data: cleanData,
-  mesh: crownOBJPath,
-  loaders: [OBJLoader],
+  mesh: crownDRCPath,
+  loaders: [DracoLoader],
   getColor: [175, 216, 142],
   getTranslation: (d) => d.translation,
   getScale: (d) => d.scale,
