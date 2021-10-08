@@ -151,7 +151,7 @@ map.once('styledata', () => {
     // Pitch 85: cut off query region from top 50%
     const { innerHeight, innerWidth } = window;
     const pitch = map.getPitch();
-    const top = pitch > 60 ? ((pitch - 60) / 25) * (innerWidth / 2) : 0;
+    const top = pitch > 60 ? ((pitch - 60) / 25) * (innerHeight / 2) : 0;
     const geometry = [
       [0, innerHeight], // bottom left
       [innerWidth, top], // top right
