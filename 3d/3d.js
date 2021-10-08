@@ -2,8 +2,9 @@ import MapboxLayer from '@deck.gl/mapbox/dist/esm/mapbox-layer';
 import { AmbientLight } from '@deck.gl/core/dist/esm/effects/lighting/ambient-light';
 import { DirectionalLight } from '@deck.gl/core/dist/esm/effects/lighting/directional-light';
 import LightingEffect from '@deck.gl/core/dist/esm/effects/lighting/lighting-effect';
-import SolidPolygonLayer from '@deck.gl/layers/dist/esm/solid-polygon-layer/solid-polygon-layer';
+// import SolidPolygonLayer from '@deck.gl/layers/dist/esm/solid-polygon-layer/solid-polygon-layer';
 import SimpleMeshLayer from '@deck.gl/mesh-layers/dist/esm/simple-mesh-layer/simple-mesh-layer';
+import CylinderGeometry from '@luma.gl/engine/dist/esm/geometries/cylinder-geometry';
 import circle from '@turf/circle';
 
 import { DracoLoader } from '@loaders.gl/draco';
@@ -24,8 +25,7 @@ const map = (window._map = new mapboxgl.Map({
 }));
 map.addControl(new mapboxgl.NavigationControl());
 
-const coord2Trunk = (position, _girth) => {
-  const girth = parseFloat((_girth || '0.5').match(/[\d.]+[^\d.]?$/)[0], 10);
+const coord2Trunk = (position, girth) => {
   const steps = 6 + (girth - 0.5) * 2; // girth: from 0.5 to 1.5
   const trunkRadius = (girth / Math.PI) * 2;
   const trunkPolygon = circle(position, trunkRadius / 1000, { steps }).geometry
@@ -35,30 +35,52 @@ const coord2Trunk = (position, _girth) => {
 
 const treesCache = new Map();
 const cleaningData = (d) => {
-  const { id, girth, height_est } = d.properties;
+  const { id, girth: _girth, height_est } = d.properties;
+  const girth = parseFloat((_girth || '0.5').match(/[\d.]+[^\d.]?$/)[0], 10);
   if (treesCache.has(id)) return treesCache.get(id);
   const position = d.geometry.coordinates;
+  const girthScale = girth / 1.5;
   const scale = height_est * 0.66;
   const newD = {
     id,
     position,
-    polygon: coord2Trunk(position, girth),
-    elevation: height_est * 0.75,
-    translation: [0, 0, height_est * 0.6],
-    scale: [scale * 0.1, scale * 0.1, scale * 0.135],
-    orientation: [0, (id.slice(-1) / 9) * 180, 0],
+    // polygon: coord2Trunk(position, girth),
+    // elevation: height_est * 0.75,
+    trunk: {
+      translation: [0, 0, (height_est * 0.75) / 2],
+      scale: [girthScale, height_est * 0.75, girthScale],
+    },
+    crown: {
+      translation: [0, 0, height_est * 0.6],
+      scale: [scale * 0.1, scale * 0.1, scale * 0.135],
+      orientation: [0, (id.slice(-1) / 9) * 180, 0],
+    },
   };
   treesCache.set(id, newD);
   return newD;
 };
 
-const treesTrunkLayer = new MapboxLayer({
-  id: 'trees-trunk',
-  type: SolidPolygonLayer,
+/*
+  Notes: I'll probably need this again to check if treesTrunkLayer2 matches the girth/height measurements
+*/
+// const treesTrunkLayer = new MapboxLayer({
+//   id: 'trees-trunk',
+//   type: SolidPolygonLayer,
+//   // data: cleanData,
+//   getFillColor: [219, 195, 154],
+//   extruded: true,
+//   getElevation: (d) => d.elevation,
+// });
+
+const treesTrunkLayer2 = new MapboxLayer({
+  id: 'trees-trunk-2',
+  type: SimpleMeshLayer,
   // data: cleanData,
-  getFillColor: [219, 195, 154],
-  extruded: true,
-  getElevation: (d) => d.elevation,
+  mesh: new CylinderGeometry(),
+  getColor: [219, 195, 154],
+  getOrientation: [0, 0, 90],
+  getTranslation: (d) => d.trunk.translation,
+  getScale: (d) => d.trunk.scale,
 });
 
 const treesCrownLayer = new MapboxLayer({
@@ -68,9 +90,9 @@ const treesCrownLayer = new MapboxLayer({
   mesh: crownDRCPath,
   loaders: [DracoLoader],
   getColor: [175, 216, 142],
-  getTranslation: (d) => d.translation,
-  getScale: (d) => d.scale,
-  getOrientation: (d) => d.orientation,
+  getTranslation: (d) => d.crown.translation,
+  getScale: (d) => d.crown.scale,
+  getOrientation: (d) => d.crown.orientation,
 });
 
 const ambientLight = new AmbientLight({
@@ -87,8 +109,10 @@ const lightingEffect = new LightingEffect({
 });
 
 map.once('styledata', () => {
-  map.addLayer(treesTrunkLayer, 'building-extrusion-2');
-  map.setLayerZoomRange('trees-trunk', 15, 22.1);
+  // map.addLayer(treesTrunkLayer, 'building-extrusion-2');
+  // map.setLayerZoomRange('trees-trunk', 15, 22.1);
+  map.addLayer(treesTrunkLayer2, 'building-extrusion-2');
+  map.setLayerZoomRange('trees-trunk-2', 15, 22.1);
   map.addLayer(treesCrownLayer, 'building-extrusion-2');
   map.setLayerZoomRange('trees-crown', 15, 22.1);
 
@@ -154,7 +178,8 @@ map.once('styledata', () => {
     requestAnimationFrame(() => {
       const cleanData = trees.map(cleaningData);
 
-      treesTrunkLayer.setProps({ data: cleanData });
+      // treesTrunkLayer.setProps({ data: cleanData });
+      treesTrunkLayer2.setProps({ data: cleanData });
       treesCrownLayer.setProps({ data: cleanData });
     });
   };
