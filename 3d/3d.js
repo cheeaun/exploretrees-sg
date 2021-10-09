@@ -150,11 +150,14 @@ map.once('styledata', () => {
     // Pitch 0 - 60: show all trees
     // Pitch 85: cut off query region from top 50%
     const { innerHeight, innerWidth } = window;
+    const padding =
+      zoom > 16 ? (Math.max(innerHeight, innerWidth) / 2) * (zoom - 16 + 1) : 0;
+    console.log(padding);
     const pitch = map.getPitch();
     const top = pitch > 60 ? ((pitch - 60) / 25) * (innerHeight / 2) : 0;
     const geometry = [
-      [0, innerHeight], // bottom left
-      [innerWidth, top], // top right
+      [0 - padding, innerHeight + padding], // bottom left
+      [innerWidth + padding, top], // top right
     ];
 
     const trees = map.queryRenderedFeatures(geometry, {
