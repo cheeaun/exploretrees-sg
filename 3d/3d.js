@@ -152,7 +152,7 @@ map.once('styledata', () => {
     const { innerHeight, innerWidth } = window;
     const padding =
       zoom > 16 ? (Math.max(innerHeight, innerWidth) / 2) * (zoom - 16 + 1) : 0;
-    console.log(padding);
+    // console.log(padding);
     const pitch = map.getPitch();
     const top = pitch > 60 ? ((pitch - 60) / 25) * (innerHeight / 2) : 0;
     const geometry = [
