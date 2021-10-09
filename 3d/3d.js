@@ -196,3 +196,37 @@ map.once('styledata', () => {
     effects: [lightingEffect],
   });
 });
+
+// Show parks
+
+import poisData from '../data/pois.json';
+const parks = poisData
+  .filter(
+    ({ type, name }) =>
+      type === 'park' && /park|garden/i.test(name) && !/playground/i.test(name),
+  )
+  .filter(
+    (d, index, self) => index === self.findIndex((t) => t.name === d.name),
+  )
+  .sort((a, b) => {
+    return a.name.localeCompare(b.name);
+  });
+console.log(parks.length);
+
+const $parkSelector = document.createElement('select');
+$parkSelector.innerHTML =
+  '<option>🚁 Fly to a park</option>' +
+  parks
+    .map((d) => `<option value="${d.position.join(',')}">${d.name}</option>`)
+    .join('');
+const $parks = document.getElementById('parks');
+$parks.appendChild($parkSelector);
+
+$parkSelector.addEventListener('change', () => {
+  if (!$parkSelector.value) return;
+  const position = $parkSelector.value.split(',').map(Number);
+  map.flyTo({
+    center: position,
+    zoom: 17,
+  });
+});
