@@ -328,7 +328,7 @@
 		]
 	},
 	{
-		"name": "Jupiter Road Playground",
+		"name": "Jupiter Playground",
 		"type": "park",
 		"position": [
 			103.82516,
@@ -349,14 +349,6 @@
 		"position": [
 			103.83317,
 			1.32113
-		]
-	},
-	{
-		"name": "Pasir Panjang Park",
-		"type": "park",
-		"position": [
-			103.79208,
-			1.2757
 		]
 	},
 	{
@@ -381,14 +373,6 @@
 		"position": [
 			103.87996,
 			1.32914
-		]
-	},
-	{
-		"name": "Katong Park",
-		"type": "park",
-		"position": [
-			103.88637,
-			1.29717
 		]
 	},
 	{
@@ -485,14 +469,6 @@
 		"position": [
 			103.82844,
 			1.362
-		]
-	},
-	{
-		"name": "MacRitchie Reservoir Park",
-		"type": "park",
-		"position": [
-			103.83359,
-			1.34152
 		]
 	},
 	{
@@ -688,7 +664,7 @@
 		]
 	},
 	{
-		"name": "Carpmael Road Open Space",
+		"name": "Carpmael Park",
 		"type": "park",
 		"position": [
 			103.89895,
@@ -773,14 +749,6 @@
 		"position": [
 			103.76487,
 			1.33632
-		]
-	},
-	{
-		"name": "Lembu Road Open Space",
-		"type": "park",
-		"position": [
-			103.85478,
-			1.30976
 		]
 	},
 	{
@@ -1040,6 +1008,14 @@
 		]
 	},
 	{
+		"name": "Chuan Lane Park",
+		"type": "park",
+		"position": [
+			103.85817,
+			1.35223
+		]
+	},
+	{
 		"name": "Telok Kurau Park",
 		"type": "park",
 		"position": [
@@ -1221,6 +1197,14 @@
 		"position": [
 			103.93621,
 			1.31701
+		]
+	},
+	{
+		"name": "Haus Linear Park",
+		"type": "park",
+		"position": [
+			103.85979,
+			1.36449
 		]
 	},
 	{
@@ -1432,6 +1416,14 @@
 		]
 	},
 	{
+		"name": "Punggol Waterway Park",
+		"type": "park",
+		"position": [
+			103.90481,
+			1.411
+		]
+	},
+	{
 		"name": "Sungei Api Api Park",
 		"type": "park",
 		"position": [
@@ -1573,6 +1565,14 @@
 		"position": [
 			103.82907,
 			1.37276
+		]
+	},
+	{
+		"name": "Punggol Park",
+		"type": "park",
+		"position": [
+			103.89865,
+			1.37694
 		]
 	},
 	{
@@ -1912,14 +1912,6 @@
 		]
 	},
 	{
-		"name": "Jalan Pari Burong Playground",
-		"type": "park",
-		"position": [
-			103.94694,
-			1.33385
-		]
-	},
-	{
 		"name": "Teacher's Estate Playground",
 		"type": "park",
 		"position": [
@@ -1989,6 +1981,14 @@
 		"position": [
 			103.85525,
 			1.3903
+		]
+	},
+	{
+		"name": "Punggol Waterway",
+		"type": "park",
+		"position": [
+			103.9154,
+			1.40223
 		]
 	},
 	{
@@ -2109,6 +2109,14 @@
 		"position": [
 			103.73547,
 			1.44021
+		]
+	},
+	{
+		"name": "Sembawang Hot Spring Park",
+		"type": "park",
+		"position": [
+			103.82265,
+			1.43417
 		]
 	},
 	{
@@ -3224,6 +3232,14 @@
 		]
 	},
 	{
+		"name": "Bukit Gombak Park",
+		"type": "park",
+		"position": [
+			103.75245,
+			1.36729
+		]
+	},
+	{
 		"name": "one-north Park: Fusionopolis North",
 		"type": "park",
 		"position": [
@@ -3309,6 +3325,14 @@
 		"position": [
 			103.75198,
 			1.37229
+		]
+	},
+	{
+		"name": "Pasir Panjang Park",
+		"type": "park",
+		"position": [
+			103.79202,
+			1.27563
 		]
 	},
 	{
