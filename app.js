@@ -890,9 +890,9 @@ const flyToPosition = (lngLat) => {
       lineWidthUnits: 'pixels',
       getLineWidth: 1,
       getLineColor: [0, 0, 0, 200],
-      parameters: {
-        depthTest: false,
-      },
+      // parameters: {
+      //   depthTest: false,
+      // },
     });
 
     map.on('zoom', () => {
