@@ -52,7 +52,7 @@ Scripts provided (should be executed in order):
 ## Copyright & license
 
 - Data from [Trees.sg](http://trees.sg) © [National Parks Board](http://www.nparks.gov.sg/)
-- Map © [Mapbox](https://www.mapbox.com/about/maps/) © [MapTiler](https://www.maptiler.com/copyright/) © [OpenStreetMap contributors](https://www.openstreetmap.org/copyright)
+- Map © [Mapbox](https://www.mapbox.com/about/maps/) © [OpenStreetMap contributors](https://www.openstreetmap.org/copyright)
 - SVG icons from [Font Awesome](https://fontawesome.com/license)
 - Code licensed under [MIT](https://cheeaun.mit-license.org/)
 
