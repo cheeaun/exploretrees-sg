@@ -909,7 +909,7 @@ const flyToPosition = (lngLat) => {
       id: 'trees',
       type: ScatterplotLayer,
       opacity: 1,
-      radiusMinPixels: 0.1,
+      radiusMinPixels: 0.2,
       radiusMaxPixels: 5,
       lineWidthUnits: 'pixels',
       getLineWidth: 1,
