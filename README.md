@@ -10,7 +10,7 @@ This is a personal side project to fuel my curiosity on these factors:
 
 - Plotting more than 500,000 data points on [Mapbox GL JS](https://www.mapbox.com/mapbox-gl-js/).
 - Data visualization of all tree data, in 4 criterias:
-  - **Type**; Tree, Flowering, Heritage
+  - **Type**; Tree, Heritage
   - **Girth** (meters)
   - **Age** (years)
   - **Family** (to group up the large number of species)

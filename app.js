@@ -276,9 +276,7 @@ const markupCard = (d, selected) => html`
   <button type="button" class="close">×</button>
   <h1>
     ${(speciesData[d.species_id] || { name: d.species_id }).name}
-    ${!d.flowering && !d.heritage ? '🌱' : ''}
-    ${d.flowering ? html` <span title="flowering">🌸</span> ` : ''}
-    ${d.heritage ? html` <span title="heritage">🌳</span> ` : ''}
+    ${d.heritage ? html` <span title="heritage">🌳</span> ` : '🌱'}
   </h1>
   <div class="common ${selected ? 'expand' : ''}">
     Family name:
@@ -408,14 +406,6 @@ const flyToPosition = (lngLat) => {
         paint: {
           'circle-color': [
             'case',
-            [
-              'all',
-              ['to-boolean', ['get', 'flowering']],
-              ['to-boolean', ['get', 'heritage']],
-            ],
-            'magenta',
-            ['to-boolean', ['get', 'flowering']],
-            'orangered',
             ['to-boolean', ['get', 'heritage']],
             'aqua',
             'green',
@@ -427,23 +417,9 @@ const flyToPosition = (lngLat) => {
             8,
             0.5,
             14,
-            [
-              'case',
-              ['to-boolean', ['get', 'flowering']],
-              3,
-              ['to-boolean', ['get', 'heritage']],
-              3,
-              1.25,
-            ],
+            ['case', ['to-boolean', ['get', 'heritage']], 3, 1.25],
             20,
-            [
-              'case',
-              ['to-boolean', ['get', 'flowering']],
-              10,
-              ['to-boolean', ['get', 'heritage']],
-              10,
-              6,
-            ],
+            ['case', ['to-boolean', ['get', 'heritage']], 10, 6],
           ],
           'circle-stroke-width': [
             'interpolate',
@@ -928,10 +904,8 @@ const flyToPosition = (lngLat) => {
 
     const layerStyles = {
       type: {
-        getRadius: (d) => (d.flowering || d.heritage ? 100 : 3),
+        getRadius: (d) => (d.heritage ? 100 : 3),
         getFillColor: (d) => {
-          if (d.flowering && d.heritage) return colorName2RGB('magenta');
-          if (d.flowering) return colorName2RGB('orangered');
           if (d.heritage) return colorName2RGB('aqua');
           return colorName2RGB('green');
         },
@@ -1057,9 +1031,6 @@ const flyToPosition = (lngLat) => {
 
     document.getElementById('total-trees').innerHTML =
       data.length.toLocaleString();
-    document.getElementById('total-flowering').innerHTML = data
-      .filter((d) => d.flowering)
-      .length.toLocaleString();
     document.getElementById('total-heritage').innerHTML = data
       .filter((d) => d.heritage)
       .length.toLocaleString();
