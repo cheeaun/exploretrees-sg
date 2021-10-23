@@ -464,6 +464,7 @@ body.modal .mapboxgl-control-container {
   -webkit-overflow-scrolling: touch;
   border-top-left-radius: 18px;
   border-top-right-radius: 18px;
+  box-shadow: inset 0 1px rgba(255, 255, 255, 0.15);
 }
 @supports (top: max(1px)) {
   #card {
@@ -612,7 +613,7 @@ body.modal #card {
   }
   @supports (top: max(1px)) {
     #card {
-      right: max(0px, env(safe-area-inset-right));
+      right: max(8px, env(safe-area-inset-right));
     }
   }
   .show-m {

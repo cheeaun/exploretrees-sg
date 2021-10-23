@@ -6,7 +6,6 @@ import ScatterplotLayer from '@deck.gl/layers/dist/esm/scatterplot-layer/scatter
 import SolidPolygonLayer from '@deck.gl/layers/dist/esm/solid-polygon-layer/solid-polygon-layer';
 import SimpleMeshLayer from '@deck.gl/mesh-layers/dist/esm/simple-mesh-layer/simple-mesh-layer';
 import SphereGeometry from '@luma.gl/engine/dist/esm/geometries/sphere-geometry';
-import msgpack from '@ygoe/msgpack';
 import polyline from '@mapbox/polyline';
 import KDBush from 'kdbush';
 import geokdbush from 'geokdbush';
@@ -22,7 +21,6 @@ export {
   SolidPolygonLayer,
   SimpleMeshLayer,
   SphereGeometry,
-  msgpack,
   polyline,
   KDBush,
   geokdbush,

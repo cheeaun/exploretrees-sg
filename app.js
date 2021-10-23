@@ -1,17 +1,40 @@
 import { html, render } from 'lit-html';
+import Papa from 'papaparse';
 
-import treesDataPath from './data/trees.min.mp.ico';
-import speciesData from './data/species.json';
-import familiesSpeciesData from './data/families-species.json';
-import poisData from './data/pois.json';
-
-import busIconPath from './assets/bus-icon.png';
-import trainIconPath from './assets/train-icon.png';
+const DATA_API_ROOT = 'https://data.exploretrees.sg/';
 
 const speciesFamily = {};
-for (let family in familiesSpeciesData) {
-  familiesSpeciesData[family].forEach((s) => (speciesFamily[s] = family));
-}
+const fColorsMap = {};
+const familiesSpeciesFetch = fetch(`${DATA_API_ROOT}families-species.json`)
+  .then((res) => res.json())
+  .then((data) => {
+    const familiesSpeciesData = data;
+    for (let family in familiesSpeciesData) {
+      familiesSpeciesData[family].forEach((s) => (speciesFamily[s] = family));
+    }
+
+    const families = Object.keys(familiesSpeciesData).sort();
+    const fColors = [];
+    const familiesCount = families.length;
+    families.forEach((f, i) => {
+      const hue = (i / familiesCount) * 300;
+      const color = `hsl(${hue}, 100%, 50%)`;
+      fColors.push(f, color);
+      fColorsMap[f] = {
+        hslStr: color,
+        rgbArr: HSLToRGB(hue, 100, 50),
+      };
+    });
+    fColors.push('slategray');
+    document.getElementById('legend-family').innerHTML = Object.keys(fColorsMap)
+      .map((f, i) => {
+        return `<span class="ib">
+      <span class="circle" style="background-color: ${fColorsMap[f].hslStr}" title="${i}"></span>
+      ${f}
+    </span>`;
+      })
+      .join('');
+  });
 
 const isTouch = 'ontouchstart' in window || navigator.msMaxTouchPoints;
 const hqHash = /#hq/.test(location.hash);
@@ -120,9 +143,7 @@ const mapBounds = [
 ];
 const map = (window._map = new mapboxgl.Map({
   container: 'map',
-  style:
-    'https://api.maptiler.com/maps/darkmatter/style.json?key=xjrAbdVfXA48AYcOS16e',
-  // style: 'https://maps.gahmen.tech/styles/dark_matter/style.json',
+  style: 'mapbox://styles/cheeaun/ckuuzdbmpf0uw17s058a34qq3?optimize=true',
   minZoom: 8,
   maxZoom: 20,
   renderWorldCopies: false,
@@ -151,104 +172,26 @@ map.addControl(
 map.addControl(new mapboxgl.NavigationControl());
 
 let labelLayerId;
-let mapLoaded = new Promise((res, rej) =>
-  map.once('load', () => {
-    map.once('idle', () => {
-      document.getElementById('map').classList.add('loaded');
-    });
+let mapLoaded = new Promise((res, rej) => map.once('load', res));
 
-    res();
-  }),
-);
+let speciesData = {};
+fetch(DATA_API_ROOT + 'species.json')
+  .then((res) => res.json())
+  .then((data) => {
+    speciesData = data;
+  });
 
 map.once('styledata', () => {
   const layers = map.getStyle().layers;
   console.log(layers);
-
-  for (let i = 0, l = layers.length; i < l; i++) {
-    const layer = layers[i];
-    if (
-      !/water/i.test(layer.id) &&
-      layer.type === 'symbol' &&
-      layer.layout['text-field']
-    ) {
-      const opacity = Math.max(i / l - 0.1, 0.5);
-      map.setPaintProperty(
-        layer.id,
-        'text-color',
-        `rgba(255,255,255,${opacity})`,
-      );
-      map.setLayoutProperty(layer.id, 'text-transform', 'none');
-      if (!labelLayerId) labelLayerId = layer.id;
-    }
-  }
-  map.setPaintProperty('water', 'fill-color', '#1A1D21');
-
-  if (renderingMode === 'high') {
-    map.removeLayer('building');
-
-    map.addLayer({
-      id: 'building-3d',
-      source: 'openmaptiles',
-      'source-layer': 'building',
-      type: 'fill-extrusion',
-      minzoom: 16,
-      paint: {
-        'fill-extrusion-color': 'rgb(200,200,200)',
-        'fill-extrusion-base': ['get', 'render_min_height'],
-        'fill-extrusion-height': ['get', 'render_height'],
-        'fill-extrusion-opacity': [
-          'interpolate',
-          ['linear'],
-          ['zoom'],
-          16,
-          0,
-          17,
-          0.2,
-        ],
-      },
-    });
-  } else {
-    map.setFilter('building', ['==', 'render_min_height', 0]);
-    map.setPaintProperty('building', 'fill-color', 'rgba(200,200,200,.1)');
-    map.setPaintProperty('building', 'fill-antialias', false);
-    map.setLayerZoomRange('building', 15, 21);
-    map.setPaintProperty('building', 'fill-opacity', [
-      'interpolate',
-      ['linear'],
-      ['zoom'],
-      15,
-      0,
-      16,
-      1,
-    ]);
-  }
-
-  map.setPaintProperty('landcover_wood', 'fill-color', 'green');
-  map.setPaintProperty('landcover_wood', 'fill-opacity', 0.1);
-  map.setPaintProperty('landcover_wood', 'fill-pattern', null);
-  map.addLayer({
-    id: 'landcover_grass',
-    type: 'fill',
-    source: 'openmaptiles',
-    'source-layer': 'landcover',
-    filter: ['all', ['==', 'class', 'grass']],
-    paint: {
-      'fill-antialias': false,
-      'fill-color': 'green',
-      'fill-opacity': 0.1,
-    },
-  });
+  labelLayerId = layers.find(
+    (layer) => layer.type === 'symbol' && layer.layout['text-field'],
+  ).id;
 
   const poiStyles = {
     layout: {
       'icon-offset': [0, -4],
       'icon-size': 0.5,
-      'text-font': [
-        'Metropolis Light',
-        'Noto Sans Regular',
-        // 'Klokantech Noto Sans Regular'
-      ],
       'text-max-width': 12,
       'text-variable-anchor': ['left', 'right', 'bottom', 'top'],
       'text-justify': 'auto',
@@ -263,152 +206,79 @@ map.once('styledata', () => {
     },
   };
 
-  map.loadImage(busIconPath, (e, img) => {
-    map.addImage('bus', img);
-  });
-  map.addLayer({
-    id: 'poi_bus',
-    type: 'symbol',
-    source: 'openmaptiles',
-    'source-layer': 'poi',
-    minzoom: 16,
-    filter: ['==', 'class', 'bus'],
-    layout: {
-      'icon-image': 'bus',
-      'text-field': [
-        'step',
-        ['zoom'],
-        '',
-        17,
-        ['concat', ['get', 'name:latin'], '\n', ['get', 'name:nonlatin']],
-      ],
-      ...poiStyles.layout,
-    },
-    paint: {
-      'text-color': 'rgba(255,255,255,.7)',
-      'text-halo-color': 'rgba(0,0,0,0.7)',
-      ...poiStyles.paint,
-    },
-  });
+  map.once('idle', () => {
+    fetch(DATA_API_ROOT + 'pois.json')
+      .then((res) => res.json())
+      .then((poisData) => {
+        map.addSource('pois', {
+          type: 'geojson',
+          tolerance: 10,
+          buffer: 0,
+          data: {
+            type: 'FeatureCollection',
+            features: poisData.map((p) => ({
+              type: 'Feature',
+              geometry: {
+                type: 'Point',
+                coordinates: p.position,
+              },
+              properties: {
+                name: p.name,
+                type: p.type,
+              },
+            })),
+          },
+        });
 
-  map.loadImage(trainIconPath, (e, img) => {
-    map.addImage('train', img);
-  });
-  map.addLayer({
-    id: 'poi_train',
-    type: 'symbol',
-    source: 'openmaptiles',
-    'source-layer': 'poi',
-    minzoom: 13,
-    filter: ['==', 'class', 'railway'],
-    layout: {
-      'icon-image': 'train',
-      'text-field': '{name:latin}\n{name:nonlatin}',
-      'text-allow-overlap': true,
-      'text-ignore-placement': true,
-      ...poiStyles.layout,
-    },
-    paint: {
-      'text-color': 'rgba(255,255,255,.7)',
-      'text-halo-color': 'rgba(0,0,0,0.7)',
-      ...poiStyles.paint,
-    },
-  });
+        map.addImage('poi-park', document.getElementById('park-icon'));
+        map.addImage('poi-hroad', document.getElementById('hroad-icon'));
+        map.addImage(
+          'poi-srgreenery',
+          document.getElementById('srgreenery-icon'),
+        );
+        map.addImage('poi-garden', document.getElementById('garden-icon'));
 
-  map.addImage('park', document.getElementById('park-icon'));
-  map.addImage('hroad', document.getElementById('hroad-icon'));
-  map.addImage('srgreenery', document.getElementById('srgreenery-icon'));
-  map.addImage('garden', document.getElementById('garden-icon'));
-
-  map.addSource('pois', {
-    type: 'geojson',
-    tolerance: 10,
-    buffer: 0,
-    data: {
-      type: 'FeatureCollection',
-      features: poisData.map((p) => ({
-        type: 'Feature',
-        geometry: {
-          type: 'Point',
-          coordinates: p.position,
-        },
-        properties: {
-          name: p.name,
-          type: p.type,
-        },
-      })),
-    },
-  });
-  map.addLayer({
-    id: 'pois',
-    type: 'symbol',
-    source: 'pois',
-    minzoom: 14,
-    layout: {
-      'icon-image': [
-        'match',
-        ['get', 'type'],
-        'park',
-        'park',
-        'hroad',
-        'hroad',
-        'srgreenery',
-        'srgreenery',
-        'garden',
-        'garden',
-        'circle-11',
-      ],
-      'text-allow-overlap': true,
-      'text-ignore-placement': true,
-      'text-field': ['step', ['zoom'], '', 16, ['get', 'name']],
-      ...poiStyles.layout,
-    },
-    paint: {
-      'text-color': 'rgba(255,255,255,.85)',
-      'text-halo-color': 'rgba(0,0,0,0.85)',
-      ...poiStyles.paint,
-    },
+        map.addLayer({
+          id: 'pois',
+          type: 'symbol',
+          source: 'pois',
+          minzoom: 16,
+          layout: {
+            'icon-image': [
+              'match',
+              ['get', 'type'],
+              'park',
+              'poi-park',
+              'hroad',
+              'poi-hroad',
+              'srgreenery',
+              'poi-srgreenery',
+              'garden',
+              'poi-garden',
+              'circle-11',
+            ],
+            'text-allow-overlap': true,
+            'text-ignore-placement': true,
+            'text-field': ['step', ['zoom'], '', 16, ['get', 'name']],
+            ...poiStyles.layout,
+          },
+          paint: {
+            'text-color': 'rgba(255,255,255,.85)',
+            'text-halo-color': 'rgba(0,0,0,0.85)',
+            ...poiStyles.paint,
+          },
+        });
+      });
   });
 });
-
-const families = Object.keys(familiesSpeciesData).sort();
-const fColors = [];
-const fColorsMap = {};
-const familiesCount = families.length;
-families.forEach((f, i) => {
-  const hue = (i / familiesCount) * 300;
-  const color = `hsl(${hue}, 100%, 50%)`;
-  fColors.push(f, color);
-  fColorsMap[f] = {
-    hslStr: color,
-    rgbArr: HSLToRGB(hue, 100, 50),
-  };
-});
-fColors.push('slategray');
-document.getElementById('legend-family').innerHTML = Object.keys(fColorsMap)
-  .map((f, i) => {
-    return `<span class="ib">
-    <span class="circle" style="background-color: ${fColorsMap[f].hslStr}" title="${i}"></span>
-    ${f}
-  </span>`;
-  })
-  .join('');
 
 const markupCard = (d, selected) => html`
   <button type="button" class="close">×</button>
   <h1>
-    ${d.name || (speciesData[d.species_id] || {}).name}
+    ${(speciesData[d.species_id] || { name: d.species_id }).name}
     ${!d.flowering && !d.heritage ? '🌱' : ''}
-    ${d.flowering
-      ? html`
-          <span title="flowering">🌸</span>
-        `
-      : ''}
-    ${d.heritage
-      ? html`
-          <span title="heritage">🌳</span>
-        `
-      : ''}
+    ${d.flowering ? html` <span title="flowering">🌸</span> ` : ''}
+    ${d.heritage ? html` <span title="heritage">🌳</span> ` : ''}
   </h1>
   <div class="common ${selected ? 'expand' : ''}">
     Family name:
@@ -523,6 +393,10 @@ const flyToPosition = (lngLat) => {
 (async () => {
   if (renderingMode === 'low') {
     await mapLoaded;
+
+    map.once('idle', () => {
+      document.getElementById('map').classList.add('loaded');
+    });
 
     map.addSource('trees-source', {
       type: 'vector',
@@ -817,14 +691,8 @@ const flyToPosition = (lngLat) => {
           const { x, y } = point;
           features = map.queryRenderedFeatures(
             [
-              {
-                x: x - pointRange,
-                y: y - pointRange,
-              },
-              {
-                x: x + pointRange,
-                y: y + pointRange,
-              },
+              [x - pointRange, y - pointRange],
+              [x + pointRange, y + pointRange],
             ],
             { layers: ['trees'] },
           );
@@ -878,7 +746,6 @@ const flyToPosition = (lngLat) => {
       SolidPolygonLayer,
       SimpleMeshLayer,
       SphereGeometry,
-      msgpack,
       polyline,
       KDBush,
       geokdbush,
@@ -899,6 +766,9 @@ const flyToPosition = (lngLat) => {
       lineWidthUnits: 'pixels',
       getLineWidth: 3,
       getLineColor: [26, 128, 227, 255],
+      parameters: {
+        depthTest: false,
+      },
     });
     function showHighlightTree(coordinates) {
       highlightPoint.position = coordinates;
@@ -957,56 +827,83 @@ const flyToPosition = (lngLat) => {
     }
     map.addControl(new PitchControl(), 'top-right');
 
-    console.time('data download and decode');
-    const fetchTrees = fetch(treesDataPath)
-      .then((res) => res.arrayBuffer())
-      .then((res) => {
-        const response = msgpack.deserialize(new Uint8Array(res));
-        console.timeEnd('data download and decode');
-        console.time('data massage');
-        const coords = polyline.decode(response.line);
-        const metadata = {};
-        const data = response.props.map((p, i) => {
-          const [
-            id,
-            tree_id,
-            species_id,
-            girth,
-            girth_size,
-            height,
-            height_est,
-            age,
-            flowering,
-            heritage,
-          ] = p;
-          const names = speciesData[species_id] || {};
-          const family = speciesFamily[species_id] || null;
-          const elevation =
-            heritage || flowering ? 0.3 : age > 30 ? 0.2 : family ? 0.1 : 0;
-          metadata[id] = {
-            tree_id,
-            species_id,
-            girth,
-            height,
-            name: names.name || '',
-            common_name: names.common_name || '',
-            family,
-          };
-          return {
-            id,
-            position: coords[i].concat(elevation),
-            // all properties needed for rendering
-            girth_size,
-            height_est,
-            age,
-            flowering,
-            heritage,
-            familyColor: fColorsMap[family] || null,
-          };
-        });
-        console.timeEnd('data massage');
-        return [data, metadata];
+    document.getElementById('map').classList.remove('loaded');
+
+    const fetchCSV = new Promise((resolve, reject) => {
+      console.time('csv download');
+      Papa.parse(DATA_API_ROOT + 'trees-no-coords.csv.txt', {
+        download: true,
+        header: true,
+        fastMode: true,
+        worker: true,
+        complete: (results) => {
+          console.timeEnd('csv download');
+          resolve(results.data);
+        },
+        error: (e) => {
+          reject(e);
+        },
       });
+    });
+
+    const fetchLines = fetch(DATA_API_ROOT + 'trees.line.txt')
+      .then((res) => res.text())
+      .then((text) => {
+        const coords = polyline.decode(text);
+        return coords;
+      });
+
+    const fetchHeritage = fetch(DATA_API_ROOT + 'heritage-trees.json').then(
+      (res) => res.json(),
+    );
+
+    const fetchTrees = Promise.all([
+      fetchCSV,
+      fetchLines,
+      fetchHeritage,
+      familiesSpeciesFetch,
+    ]).then(([props, coords, heritageList]) => {
+      // console.log({ props, coords });
+      const metadata = {};
+      const data = props.map((p, i) => {
+        const {
+          id,
+          tree_id,
+          species_id,
+          girth,
+          girth_size,
+          height,
+          height_est,
+          age,
+        } = p;
+        // const names = speciesData[species_id] || {};
+        const family = speciesFamily[species_id] || null;
+        const heritage = heritageList.includes(id);
+        const elevation = heritage ? 0.4 : age > 30 ? 0.3 : family ? 0.2 : 0.1;
+        const position = coords[i].concat(elevation);
+        metadata[id] = {
+          tree_id,
+          species_id,
+          girth,
+          height,
+          // name: names.name || '',
+          // common_name: names.common_name || '',
+          family,
+        };
+        return {
+          id,
+          position,
+          // all properties needed for rendering
+          girth_size,
+          height_est: +height_est,
+          age: +age,
+          heritage,
+          familyColor: fColorsMap[family] || null,
+        };
+      });
+
+      return [data, metadata];
+    });
 
     const treesLayer = new MapboxLayer({
       id: 'trees',
@@ -1017,6 +914,9 @@ const flyToPosition = (lngLat) => {
       lineWidthUnits: 'pixels',
       getLineWidth: 1,
       getLineColor: [0, 0, 0, 200],
+      parameters: {
+        depthTest: false,
+      },
     });
 
     map.on('zoom', () => {
@@ -1131,15 +1031,6 @@ const flyToPosition = (lngLat) => {
 
     await mapLoaded;
 
-    // Too bad Singapore is not hilly enough
-    // map.addSource('mapbox-dem', {
-    //   type: 'raster-dem',
-    //   url: 'mapbox://mapbox.mapbox-terrain-dem-v1',
-    //   tileSize: 512,
-    //   maxzoom: 14,
-    // });
-    // map.setTerrain({ source: 'mapbox-dem', exaggeration: 10 });
-
     map.addLayer({
       id: 'sky',
       type: 'sky',
@@ -1164,9 +1055,8 @@ const flyToPosition = (lngLat) => {
     treesLayer.setProps({ data });
     map.addLayer(treesLayer, labelLayerId);
 
-    document.getElementById(
-      'total-trees',
-    ).innerHTML = data.length.toLocaleString();
+    document.getElementById('total-trees').innerHTML =
+      data.length.toLocaleString();
     document.getElementById('total-flowering').innerHTML = data
       .filter((d) => d.flowering)
       .length.toLocaleString();
@@ -1416,6 +1306,10 @@ const flyToPosition = (lngLat) => {
       });
     }, 1000);
     map.on('moveend', renderTrees);
+
+    map.once('idle', () => {
+      document.getElementById('map').classList.add('loaded');
+    });
   }
 })();
 
@@ -1431,18 +1325,20 @@ if (/touch\-demo/i.test(location.hash)) {
   pointers[1] = pointers[0].cloneNode();
   pointers.forEach((p) => document.body.appendChild(p));
 
-  document.body.ontouchstart = document.body.ontouchend = document.body.ontouchmove = document.body.ontouchcancel = (
-    e,
-  ) => {
-    requestAnimationFrame(() => {
-      pointers.forEach((p) => (p.hidden = true));
-      [...e.touches].forEach((touch, i) => {
-        if (i >= 2) return;
-        pointers[
-          i
-        ].style.transform = `translate(${touch.clientX}px, ${touch.clientY}px)`;
-        pointers[i].hidden = false;
-      });
-    });
-  };
+  document.body.ontouchstart =
+    document.body.ontouchend =
+    document.body.ontouchmove =
+    document.body.ontouchcancel =
+      (e) => {
+        requestAnimationFrame(() => {
+          pointers.forEach((p) => (p.hidden = true));
+          [...e.touches].forEach((touch, i) => {
+            if (i >= 2) return;
+            pointers[
+              i
+            ].style.transform = `translate(${touch.clientX}px, ${touch.clientY}px)`;
+            pointers[i].hidden = false;
+          });
+        });
+      };
 }
