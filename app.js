@@ -1,4 +1,4 @@
-import { html, render } from 'lit-html';
+import { html, render } from 'lit/html.js';
 import Papa from 'papaparse';
 
 const DATA_API_ROOT = 'https://data.exploretrees.sg/';

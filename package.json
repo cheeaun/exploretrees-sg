@@ -57,10 +57,9 @@
     "@ygoe/msgpack": "~1.0.3",
     "deasync": "~0.1.23",
     "geokdbush": "~1.1.0",
-    "just-debounce-it": "~1.5.0",
-    "just-throttle": "~2.3.1",
+    "just-throttle": "~3.0.0",
     "kdbush": "~3.0.0",
-    "lit-html": "~1.3.0",
+    "lit": "~2.0.2",
     "papaparse": "~5.3.1"
   },
   "babel": {
