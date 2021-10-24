@@ -1,7 +1,5 @@
 <div align="center">
-  <svg xmlns="http://w3.org/2000/svg" viewBox="0 0 100 100" width="96" height="96">
-    <text y=".9em" font-size="95">🌳</text>
-  </svg>
+  <img src="logo.svg" width="96" alt="">
 
   # ExploreTrees.SG
 
