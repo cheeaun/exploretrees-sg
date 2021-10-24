@@ -166,6 +166,7 @@ map.addControl(
     positionOptions: {
       enableHighAccuracy: true,
     },
+    showUserHeading: true,
     trackUserLocation: true,
   }),
 );
