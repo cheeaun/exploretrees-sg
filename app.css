@@ -314,7 +314,9 @@ header h1 {
   background-color: rgba(0, 0, 0, 0.8);
   line-height: 1.4em;
   transition: 0.3s transform ease-in-out;
-  box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 0 30px rgba(0, 0, 0, 0.5),
+    inset 1px 1px rgb(255, 255, 255, 0.15),
+    inset -1px -1px rgb(255, 255, 255, 0.15);
   overflow: auto;
   -webkit-overflow-scrolling: touch;
 }
