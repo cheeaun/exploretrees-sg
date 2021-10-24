@@ -1,4 +1,12 @@
-# ExploreTrees.SG - Explore Trees in Singapore
+<div align="center">
+  <svg xmlns="http://w3.org/2000/svg" viewBox="0 0 100 100" width="96" height="96">
+    <text y=".9em" font-size="95">🌳</text>
+  </svg>
+
+  # ExploreTrees.SG
+
+**Explore Trees in Singapore** 🌳🌲🌴
+</div>
 
 On [17 March 2018](https://twitter.com/nparksbuzz/status/974857306734120960), [National Parks Board](https://www.nparks.gov.sg/) launched an all-new web site called [Trees.sg](http://trees.sg). On the next day, I started [my journey in getting the data](https://twitter.com/cheeaun/status/975272277926330369) [and visualizing it to my heart's content](https://twitter.com/cheeaun/status/976657582105362432).
 
@@ -20,36 +28,24 @@ This is a personal side project to fuel my curiosity on these factors:
 
 ## 👇👇👇 Read more about it 👇👇👇
 
-- [Building ExploreTrees.SG](https://cheeaun.com/blog/2018/04/building-exploretrees-sg/) (2018)
-- [Next-level visualizations with ExploreTrees.SG](https://cheeaun.com/blog/2019/07/next-level-visualizations-exploretrees-sg/) (2019)
+- 2018: [Building ExploreTrees.SG](https://cheeaun.com/blog/2018/04/building-exploretrees-sg/)
+- 2019: [Next-level visualizations with ExploreTrees.SG](https://cheeaun.com/blog/2019/07/next-level-visualizations-exploretrees-sg/)
 
 ## Technicalities
 
-All scripts for fetching and cleaning up data are in the `scripts` folder. [Node.js](https://nodejs.org/en/) and [`npm`](https://www.npmjs.com/) are required to run them.
+### Web App
 
-Begin by installing all the essential dependencies.
+[Node.js](https://nodejs.org/) is required.
 
-> npm install
+- `npm install` - install dependencies.
+- `npm start` - start a local server for the site.
+- `npm run build` - build the assets in `dist` folder for deployment.
 
-Scripts provided (should be executed in order):
+### Data
 
-- Data collection:
-  - `npm run trees` - fetch all raw tree data from [Trees.SG](http://trees.sg) (NOT included in this repository) and generate `grid-*.json` files in the `data` folder.
-  - `npm run family` - fetch family categories for the trees, and generate `species-info.json`, `families-species.json` and `families.json`.
-  - `npm run pois` - fetch Points of Interets, mainly the parks, community gardens, heritage roads and skyrise greeneries.
-- Data manipulation:
-  - `npm run chunk` - read all the raw data and generate a cleaner `trees-everything.geojson` (NOT included in this repository).
-  - `npm run minify` - generate minified/compressed data from `trees-everything.geojson` into `trees.min.json`, `trees.min.mp.ico` and `trees.min.mp.gz` (not included in this repos).
-    - `.ico` file extension is used to mask the `.mp` extension which is actually a [MessagePack](https://msgpack.org/) file. It's NOT an icon file and the `.ico` file extension is meant to fool the server to apply Gzip/Brotli compression on it, since there's no official MIME type for MessagePack. GitHub Pages serves `.mp` as uncompressed `application/octet-stream`. Cloudflare [compresses](https://support.cloudflare.com/hc/en-us/articles/200168396-What-will-Cloudflare-compress-) `image/x-icon`.
-    - `.gz` file is not used but only to show how large the file size is after gzipped.
-  - `npm run pre-tiles` - generate the needed `GeoJSON` files before converting to `MBTiles` (NOT included in this repository).
-  - `npm run tiles` - generate the ultimate final `trees.mbtiles` file (NOT included in this repository), to be uploaded on [Mapbox Studio](https://www.mapbox.com/mapbox-studio/) as a [tileset](https://www.mapbox.com/help/define-tileset/).
-- Dev server:
-  - `npm start` - start a local server for the site.
-- Production build:
-  - `npm run build` - build the assets in `dist` folder for deployment.
+Available here: [cheeaun/sgtreesdata](https://github.com/cheeaun/sgtreesdata).
 
-## Icon
+### Icon
 
 Uses 🌳. Generated via <https://formito.com/tools/favicon> (Size `80`).
 
