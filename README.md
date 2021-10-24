@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="logo.svg" width="96" alt="">
+  <img src="icons/icon-192.png" width="96" alt="">
 
   # ExploreTrees.SG
 
