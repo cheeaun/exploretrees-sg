@@ -709,6 +709,25 @@ const flyToPosition = (lngLat) => {
       hideHighlightTree();
       return true;
     });
+
+    class Link3DControl {
+      onAdd(map) {
+        this._map = map;
+        const container = document.createElement('a');
+        container.className = 'mapboxgl-ctrl mapboxgl-ctrl-group';
+        container.innerHTML = `
+          <button class="mapboxgl-ctrl-icon mapboxgl-ctrl-custom-pitch" type="button">
+            <span>🌳</span>
+          </button>
+        `;
+        container.href = '/3d/';
+        container.target = '_blank';
+        container.style.textDecoration = 'none';
+        this._container = container;
+        return this._container;
+      }
+    }
+    map.addControl(new Link3DControl(), 'top-right');
   } else {
     const {
       MapboxLayer,
