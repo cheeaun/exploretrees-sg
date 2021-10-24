@@ -49,6 +49,10 @@ Scripts provided (should be executed in order):
 - Production build:
   - `npm run build` - build the assets in `dist` folder for deployment.
 
+## Icon
+
+Uses 🌳. Generated via <https://formito.com/tools/favicon> (Size `80`).
+
 ## Copyright & license
 
 - Data from [Trees.sg](http://trees.sg) © [National Parks Board](http://www.nparks.gov.sg/)

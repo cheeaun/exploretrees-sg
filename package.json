@@ -15,7 +15,7 @@
     "pois": "node scripts/fetch-pois",
     "start": "parcel index.html 3d/index.html --no-hmr",
     "prebuild": "rm -rf dist",
-    "build": "parcel build index.html 3d/index.html",
+    "build": "parcel build index.html 3d/index.html --no-scope-hoist",
     "postbuild": "cpy {CNAME,favicon.ico} dist"
   },
   "keywords": [
@@ -29,19 +29,17 @@
   "author": "Lim Chee Aun",
   "license": "MIT",
   "devDependencies": {
-    "@babel/core": "~7.13.14",
-    "@babel/plugin-transform-runtime": "~7.13.10",
+    "@parcel/packager-raw-url": "^2.0.0",
+    "@parcel/transformer-webmanifest": "^2.0.0",
     "@turf/turf": "~6.5.0",
-    "autoprefixer": "~9.8.4",
+    "autoprefixer": "~10.3.7",
     "cpy-cli": "~3.1.1",
     "got": "~11.8.2",
-    "parcel-bundler": "~1.12.4",
-    "parcel-plugin-bundle-visualiser": "~1.2.0",
-    "postcss-import-url": "~5.1.0",
-    "postcss-modules": "~3.1.0"
+    "parcel": "~2.0.0",
+    "postcss-import-url": "~7.0.0",
+    "postcss-modules": "~4.2.2"
   },
   "dependencies": {
-    "@babel/runtime": "~7.13.10",
     "@deck.gl/core": "~8.6.0",
     "@deck.gl/extensions": "~8.6.0",
     "@deck.gl/geo-layers": "~8.6.0",
@@ -59,18 +57,15 @@
     "just-throttle": "~3.0.0",
     "kdbush": "~3.0.0",
     "lit": "~2.0.2",
-    "papaparse": "~5.3.1"
+    "papaparse": "~5.3.1",
+    "workbox-cacheable-response": "^6.3.0",
+    "workbox-expiration": "^6.3.0",
+    "workbox-google-analytics": "^6.3.0",
+    "workbox-routing": "^6.3.0",
+    "workbox-strategies": "^6.3.0"
   },
-  "babel": {
-    "plugins": [
-      [
-        "@babel/plugin-transform-runtime"
-      ]
-    ]
-  },
-  "browserslist": [
-    ">0.25% in SG",
-    "not op_mini all",
-    "not ie < 999"
-  ]
+  "browserslist": ">0.25% in SG, not dead, not ie 11, not chrome < 51, not safari < 10, not op_mini all",
+  "@parcel/bundler-default": {
+    "minBundles": 10
+  }
 }

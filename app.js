@@ -1,10 +1,11 @@
-import { html, render } from 'lit/html.js';
+import { html, render } from 'lit';
 import Papa from 'papaparse';
 
 const DATA_API_ROOT = 'https://data.exploretrees.sg/';
 
 const speciesFamily = {};
 const fColorsMap = {};
+const fColors = [];
 const familiesSpeciesFetch = fetch(`${DATA_API_ROOT}families-species.json`)
   .then((res) => res.json())
   .then((data) => {
@@ -14,7 +15,6 @@ const familiesSpeciesFetch = fetch(`${DATA_API_ROOT}families-species.json`)
     }
 
     const families = Object.keys(familiesSpeciesData).sort();
-    const fColors = [];
     const familiesCount = families.length;
     families.forEach((f, i) => {
       const hue = (i / familiesCount) * 300;
@@ -391,10 +391,6 @@ const flyToPosition = (lngLat) => {
 (async () => {
   if (renderingMode === 'low') {
     await mapLoaded;
-
-    map.once('idle', () => {
-      document.getElementById('map').classList.add('loaded');
-    });
 
     map.addSource('trees-source', {
       type: 'vector',
@@ -1277,11 +1273,11 @@ const flyToPosition = (lngLat) => {
       });
     }, 1000);
     map.on('moveend', renderTrees);
-
-    map.once('idle', () => {
-      document.getElementById('map').classList.add('loaded');
-    });
   }
+
+  map.once('idle', () => {
+    document.getElementById('map').classList.add('loaded');
+  });
 })();
 
 // Touch demo mode
@@ -1312,4 +1308,12 @@ if (/touch\-demo/i.test(location.hash)) {
           });
         });
       };
+}
+
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register(new URL('./sw.js', import.meta.url), {
+      type: 'module',
+    });
+  });
 }

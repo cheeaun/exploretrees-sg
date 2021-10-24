@@ -8,6 +8,7 @@ body {
   overflow: hidden;
   margin: 0;
   padding: 0;
+  color: #fff;
   background-color: #333;
   text-size-adjust: none;
 }
@@ -156,7 +157,9 @@ body.modal .mapboxgl-control-container {
   background-color: rgba(255, 255, 255, 0.8);
   border-radius: 123123px;
 }
-@supports (backdrop-filter: blur(10px)) {
+@supports (
+  (-webkit-backdrop-filter: blur(1px)) or (backdrop-filter: blur(1px))
+) {
   .mapboxgl-ctrl-group {
     background-color: rgba(255, 255, 255, 0.7);
     backdrop-filter: blur(10px) saturate(3);
@@ -225,6 +228,7 @@ body.modal .mapboxgl-control-container {
 }
 #layers-button svg {
   transition: 0.3s transform ease-in-out;
+  vertical-align: middle;
 }
 #layers-button:hover svg {
   transform: rotate(30deg);
@@ -266,16 +270,18 @@ body.modal .mapboxgl-control-container {
     transform: rotate(0);
   }
 }
-#layers-button:before {
-  content: attr(title);
+
+header h1 {
+  margin: 0;
+  padding: 0;
   font-weight: bold;
   font-size: 1.1em;
-  position: absolute;
+  position: fixed;
   top: 25px;
-  left: -10px;
+  right: 64px;
   white-space: nowrap;
-  transform: translateX(-100%);
   text-shadow: 0 2px #000;
+  margin-right: 0.3em;
   animation: poof 1s 5s ease-in both;
 }
 @-webkit-keyframes poof {
@@ -284,7 +290,7 @@ body.modal .mapboxgl-control-container {
   }
   100% {
     opacity: 0;
-    transform: translateX(10%);
+    transform: translateX(100%);
   }
 }
 @keyframes poof {
@@ -293,7 +299,7 @@ body.modal .mapboxgl-control-container {
   }
   100% {
     opacity: 0;
-    transform: translateX(10%);
+    transform: translateX(100%);
   }
 }
 
@@ -661,11 +667,6 @@ body.modal #card {
 @supports (
   (-webkit-backdrop-filter: blur(1px)) or (backdrop-filter: blur(1px))
 ) {
-  .mapboxgl-ctrl-group {
-    background-color: rgba(255, 255, 255, 0.5);
-    -webkit-backdrop-filter: blur(10px) saturate(3);
-    backdrop-filter: blur(10px) saturate(3);
-  }
   #layers,
   #card {
     background-color: rgba(0, 0, 0, 0.3);

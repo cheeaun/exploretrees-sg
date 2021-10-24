@@ -8,7 +8,8 @@ import CylinderGeometry from '@luma.gl/engine/dist/esm/geometries/cylinder-geome
 import circle from '@turf/circle';
 
 import { DracoLoader } from '@loaders.gl/draco';
-import crownDRCPath from '../assets/crown.drc';
+// import crownDRCPath from '../assets/crown.drc';
+const crownDRCPath = new URL('../assets/crown.drc', import.meta.url);
 
 const ACCESS_TOKEN =
   'pk.eyJ1IjoiY2hlZWF1biIsImEiOiJjanF3azBrMjMwM2w1NDNyN3Yzc21saDUzIn0.jNWlsBO-S3uDKdfT9IKT1A';
