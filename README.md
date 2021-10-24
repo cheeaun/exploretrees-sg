@@ -3,7 +3,7 @@
 
   # ExploreTrees.SG
 
-**Explore Trees in Singapore** 🌳🌲🌴
+🌳 **Explore Trees in Singapore** 🇸🇬
 </div>
 
 On [17 March 2018](https://twitter.com/nparksbuzz/status/974857306734120960), [National Parks Board](https://www.nparks.gov.sg/) launched an all-new web site called [Trees.sg](http://trees.sg). On the next day, I started [my journey in getting the data](https://twitter.com/cheeaun/status/975272277926330369) [and visualizing it to my heart's content](https://twitter.com/cheeaun/status/976657582105362432).
