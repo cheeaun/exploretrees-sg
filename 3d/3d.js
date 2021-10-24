@@ -88,7 +88,7 @@ const treesCrownLayer = new MapboxLayer({
   id: 'trees-crown',
   type: SimpleMeshLayer,
   // data: cleanData,
-  mesh: crownDRCPath,
+  mesh: crownDRCPath.pathname,
   loaders: [DracoLoader],
   getColor: [175, 216, 142],
   getTranslation: (d) => d.crown.translation,
