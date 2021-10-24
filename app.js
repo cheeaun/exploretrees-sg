@@ -1238,13 +1238,13 @@ const flyToPosition = (lngLat) => {
           let results = index3D
             .range(...bounds.toArray().flat())
             .map((id) => data3D[id]);
-          // Min: 1000, Max: 10000 3D trees
+          // Min: 1000, Max: 5000 3D trees
           if (results.length < 1000) {
             const center = map.getCenter();
             results = geokdbush.around(index3D, center.lng, center.lat, 1000);
-          } else if (results.length > 10000) {
+          } else if (results.length > 5000) {
             const center = map.getCenter();
-            results = geokdbush.around(index3D, center.lng, center.lat, 10000);
+            results = geokdbush.around(index3D, center.lng, center.lat, 5000);
           }
           console.log(`3D trees count: ${results.length}`);
           trees3DLayer.setProps({
