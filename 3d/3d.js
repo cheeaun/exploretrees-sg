@@ -23,6 +23,9 @@ const map = (window._map = new mapboxgl.Map({
   center: [103.84708968044379, 1.2928590602954841],
   pitch: 65,
   zoom: 17.7,
+  customAttribution: [
+    '<a href="https://trees.sg/" target="_blank">©️ Trees.sg</a> <a href="http://www.nparks.gov.sg/" target="_blank">©️ National Parks Board</a>',
+  ],
 }));
 map.addControl(new mapboxgl.NavigationControl());
 
