@@ -395,7 +395,8 @@ const flyToPosition = (lngLat) => {
 
     map.addSource('trees-source', {
       type: 'vector',
-      url: 'mapbox://cheeaun.bptkspgy',
+      url: 'mapbox://cheeaun.bptkspgy', // Production
+      // url: 'mapbox://cheeaun.dgcdx6zd', // Staging
     });
 
     const layerStyles = {
