@@ -5,7 +5,7 @@ import LightingEffect from '@deck.gl/core/dist/esm/effects/lighting/lighting-eff
 // import SolidPolygonLayer from '@deck.gl/layers/dist/esm/solid-polygon-layer/solid-polygon-layer';
 import SimpleMeshLayer from '@deck.gl/mesh-layers/dist/esm/simple-mesh-layer/simple-mesh-layer';
 import CylinderGeometry from '@luma.gl/engine/dist/esm/geometries/cylinder-geometry';
-import circle from '@turf/circle';
+// import circle from '@turf/circle';
 
 import { DracoLoader } from '@loaders.gl/draco';
 // import crownDRCPath from '../assets/crown.drc';
@@ -29,13 +29,13 @@ const map = (window._map = new mapboxgl.Map({
 }));
 map.addControl(new mapboxgl.NavigationControl());
 
-const coord2Trunk = (position, girth) => {
-  const steps = 6 + (girth - 0.5) * 2; // girth: from 0.5 to 1.5
-  const trunkRadius = (girth / Math.PI) * 2;
-  const trunkPolygon = circle(position, trunkRadius / 1000, { steps }).geometry
-    .coordinates;
-  return trunkPolygon;
-};
+// const coord2Trunk = (position, girth) => {
+//   const steps = 6 + (girth - 0.5) * 2; // girth: from 0.5 to 1.5
+//   const trunkRadius = (girth / Math.PI) * 2;
+//   const trunkPolygon = circle(position, trunkRadius / 1000, { steps }).geometry
+//     .coordinates;
+//   return trunkPolygon;
+// };
 
 const treesCache = new Map();
 const cleaningData = (d) => {
