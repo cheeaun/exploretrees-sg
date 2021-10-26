@@ -241,9 +241,11 @@ map.once('styledata', () => {
 
     // Zoom 19: show all (height > 0)
     // Zoom 15: show trees with height > 24
-    const height =
+    const height = Math.max(
+      0,
       ((zoom - minZoom) / (maxZoom - minZoom)) * (maxHeight - minHeight) +
-      minHeight;
+        minHeight,
+    );
 
     // Pitch 0 - 60: show all trees
     // Pitch 85: cut off query region from top 50%
