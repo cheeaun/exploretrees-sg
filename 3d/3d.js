@@ -4,12 +4,20 @@ import { DirectionalLight } from '@deck.gl/core/dist/esm/effects/lighting/direct
 import LightingEffect from '@deck.gl/core/dist/esm/effects/lighting/lighting-effect';
 // import SolidPolygonLayer from '@deck.gl/layers/dist/esm/solid-polygon-layer/solid-polygon-layer';
 import SimpleMeshLayer from '@deck.gl/mesh-layers/dist/esm/simple-mesh-layer/simple-mesh-layer';
-import CylinderGeometry from '@luma.gl/engine/dist/esm/geometries/cylinder-geometry';
+// import CylinderGeometry from '@luma.gl/engine/dist/esm/geometries/cylinder-geometry';
+import TruncatedConeGeometry from '@luma.gl/engine/dist/esm/geometries/truncated-cone-geometry';
 // import circle from '@turf/circle';
 
 import { DracoLoader } from '@loaders.gl/draco';
 // import crownDRCPath from '../assets/crown.drc';
 const crownDRCPath = new URL('../assets/crown.drc', import.meta.url);
+const crownPalmDRCPath = new URL('../assets/crown-palm.drc', import.meta.url);
+const crownEvergreenDRCPath = new URL(
+  '../assets/crown-evergreen.drc',
+  import.meta.url,
+);
+
+const DATA_API_ROOT = 'https://data.exploretrees.sg/';
 
 const ACCESS_TOKEN =
   'pk.eyJ1IjoiY2hlZWF1biIsImEiOiJjanF3azBrMjMwM2w1NDNyN3Yzc21saDUzIn0.jNWlsBO-S3uDKdfT9IKT1A';
@@ -37,28 +45,77 @@ map.addControl(new mapboxgl.NavigationControl());
 //   return trunkPolygon;
 // };
 
+const speciesFamily = {};
+fetch(`${DATA_API_ROOT}families-species.json`)
+  .then((res) => res.json())
+  .then((data) => {
+    const familiesSpeciesData = data;
+    for (let family in familiesSpeciesData) {
+      familiesSpeciesData[family].forEach((s) => (speciesFamily[s] = family));
+    }
+  });
+
 const treesCache = new Map();
 const cleaningData = (d) => {
-  const { id, girth: _girth, height_est } = d.properties;
+  const { id, girth: _girth, height_est, species_id } = d.properties;
   const girth = parseFloat((_girth || '0.5').match(/[\d.]+[^\d.]?$/)[0], 10);
   if (treesCache.has(id)) return treesCache.get(id);
   const position = d.geometry.coordinates;
   const girthScale = girth / 1.5;
+  const family = speciesFamily[species_id];
+  const type =
+    family === 'Arecaceae (Palmae)'
+      ? 'palm'
+      : family === 'Pinaceae'
+      ? 'evergreen'
+      : 'decidious';
+
   const scale = height_est * 0.66;
+  const palmScale = height_est * 0.05;
+  const evergrenScale = height_est * 0.05;
   const newD = {
     id,
     position,
+    type,
     // polygon: coord2Trunk(position, girth),
     // elevation: height_est * 0.75,
-    trunk: {
-      translation: [0, 0, (height_est * 0.75) / 2],
-      scale: [girthScale, height_est * 0.75, girthScale],
-    },
-    crown: {
-      translation: [0, 0, height_est * 0.6],
-      scale: [scale * 0.1, scale * 0.1, scale * 0.135],
-      orientation: [0, (id.slice(-1) / 9) * 180, 0],
-    },
+    trunk:
+      type === 'palm'
+        ? {
+            translation: [0, 0, height_est / 2],
+            scale: [girthScale, height_est, girthScale],
+          }
+        : type === 'evergreen'
+        ? {
+            translation: [0, 0, (height_est * 0.5) / 2],
+            scale: [girthScale, height_est * 0.5, girthScale],
+          }
+        : {
+            translation: [0, 0, (height_est * 0.75) / 2],
+            scale: [girthScale, height_est * 0.75, girthScale],
+          },
+    crown:
+      type === 'palm'
+        ? {
+            translation: [0, 0, height_est * 0.85],
+            scale: [palmScale * 0.1, palmScale * 0.1, palmScale * 0.1],
+            orientation: [0, (id.slice(-1) / 9) * 180, 90],
+          }
+        : type === 'evergreen'
+        ? {
+            translation: [0, 0, height_est * 0.6],
+            scale: [
+              evergrenScale * 0.09,
+              evergrenScale * 0.1,
+              evergrenScale * 0.09,
+            ],
+            orientation: [0, (id.slice(-1) / 9) * 180, 90],
+          }
+        : {
+            translation: [0, 0, height_est * 0.6],
+            scale: [scale * 0.1, scale * 0.1, scale * 0.135],
+            orientation: [0, (id.slice(-1) / 9) * 180, 0],
+          },
   };
   treesCache.set(id, newD);
   return newD;
@@ -80,8 +137,11 @@ const treesTrunkLayer2 = new MapboxLayer({
   id: 'trees-trunk-2',
   type: SimpleMeshLayer,
   // data: cleanData,
-  mesh: new CylinderGeometry(),
-  getColor: [219, 195, 154],
+  mesh: new TruncatedConeGeometry({
+    topRadius: 0.5,
+    bottomRadius: 1.2,
+  }),
+  getColor: [154, 147, 127],
   getOrientation: [0, 0, 90],
   getTranslation: (d) => d.trunk.translation,
   getScale: (d) => d.trunk.scale,
@@ -99,6 +159,30 @@ const treesCrownLayer = new MapboxLayer({
   getOrientation: (d) => d.crown.orientation,
 });
 
+const treesPalmCrownLayer = new MapboxLayer({
+  id: 'trees-palm-crown',
+  type: SimpleMeshLayer,
+  // data: cleanData,
+  mesh: crownPalmDRCPath.pathname,
+  loaders: [DracoLoader],
+  getColor: [175, 216, 142],
+  getTranslation: (d) => d.crown.translation,
+  getScale: (d) => d.crown.scale,
+  getOrientation: (d) => d.crown.orientation,
+});
+
+const treesEvergreenCrownLayer = new MapboxLayer({
+  id: 'trees-evergreen-crown',
+  type: SimpleMeshLayer,
+  // data: cleanData,
+  mesh: crownEvergreenDRCPath.pathname,
+  loaders: [DracoLoader],
+  getColor: [175, 216, 142],
+  getTranslation: (d) => d.crown.translation,
+  getScale: (d) => d.crown.scale,
+  getOrientation: (d) => d.crown.orientation,
+});
+
 const ambientLight = new AmbientLight({
   intensity: 2.25,
 });
@@ -107,9 +191,15 @@ const directionalLight = new DirectionalLight({
   intensity: 0.35,
   direction: [0, 0, -1],
 });
+const directionalLight2 = new DirectionalLight({
+  color: [255, 255, 255],
+  intensity: 0.25,
+  direction: [0, -1, 0],
+});
 const lightingEffect = new LightingEffect({
   ambientLight,
   directionalLight,
+  directionalLight2,
 });
 
 map.once('styledata', () => {
@@ -119,6 +209,10 @@ map.once('styledata', () => {
   map.setLayerZoomRange('trees-trunk-2', 15, 22.1);
   map.addLayer(treesCrownLayer, 'building-extrusion-2');
   map.setLayerZoomRange('trees-crown', 15, 22.1);
+  map.addLayer(treesPalmCrownLayer, 'building-extrusion-2');
+  map.setLayerZoomRange('trees-palm-crown', 15, 22.1);
+  map.addLayer(treesEvergreenCrownLayer, 'building-extrusion-2');
+  map.setLayerZoomRange('trees-evergreen-crown', 15, 22.1);
 
   map.addSource('trees-source', {
     type: 'vector',
@@ -171,7 +265,6 @@ map.once('styledata', () => {
     });
 
     // DEBUGGING
-    console.log('🌳', trees.length);
     // const treesHeight = {};
     // trees.forEach((d) => {
     //   const { height_est } = d.properties;
@@ -187,7 +280,26 @@ map.once('styledata', () => {
 
       // treesTrunkLayer.setProps({ data: cleanData });
       treesTrunkLayer2.setProps({ data: cleanData });
-      treesCrownLayer.setProps({ data: cleanData });
+
+      // Split the trees into different crowns
+      const dediciousData = [];
+      const palmData = [];
+      const evergreenData = [];
+      cleanData.forEach((d) => {
+        if (d.type === 'palm') {
+          palmData.push(d);
+        } else if (d.type === 'evergreen') {
+          evergreenData.push(d);
+        } else {
+          dediciousData.push(d);
+        }
+      });
+      console.log(
+        `🌳 ${dediciousData.length} 🌴 ${palmData.length} 🌲 ${evergreenData.length} = ${trees.length}`,
+      );
+      treesCrownLayer.setProps({ data: dediciousData });
+      treesPalmCrownLayer.setProps({ data: palmData });
+      treesEvergreenCrownLayer.setProps({ data: evergreenData });
     });
   };
 
@@ -202,7 +314,6 @@ map.once('styledata', () => {
 });
 
 // Show parks
-const DATA_API_ROOT = 'https://data.exploretrees.sg/';
 fetch(DATA_API_ROOT + 'pois.json')
   .then((res) => res.json())
   .then((poisData) => {
