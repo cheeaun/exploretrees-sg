@@ -13,6 +13,36 @@ body {
     Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';
 }
 
+header {
+  pointer-events: none;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1;
+  background: radial-gradient(
+    farthest-side at 0 0,
+    rgba(255, 255, 255, 0.9),
+    rgba(255, 255, 255, 0)
+  );
+}
+h1 {
+  margin: 0;
+  padding: 0.5em;
+  background: #81a85a;
+  background: -webkit-linear-gradient(
+    to bottom right,
+    #81a85a 0%,
+    #000000 100%
+  );
+  background: -moz-linear-gradient(to bottom right, #81a85a 0%, #000000 100%);
+  background: linear-gradient(to bottom right, #81a85a 0%, #000000 89%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-size: 28px;
+  letter-spacing: -1px;
+}
+
 #map {
   position: absolute;
   top: 0;
