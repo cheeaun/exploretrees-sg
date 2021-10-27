@@ -1112,8 +1112,9 @@ const flyToPosition = (lngLat) => {
     treesLayer.setProps({ data });
     map.addLayer(treesLayer, labelLayerId);
 
-    document.getElementById('total-trees').innerHTML =
-      data.length.toLocaleString();
+    document.getElementById('total-trees').innerHTML = data
+      .filter((d) => !d.heritage)
+      .length.toLocaleString();
     document.getElementById('total-heritage').innerHTML = data
       .filter((d) => d.heritage)
       .length.toLocaleString();
@@ -1312,7 +1313,7 @@ const flyToPosition = (lngLat) => {
       });
       const sunLight = new SunLight({
         timestamp,
-        intensity: phaseColor === 'dark' ? 0.5 : 2,
+        intensity: phaseColor === 'dark' ? 2 : 2,
       });
       const lightingEffect = new LightingEffect({ ambientLight, sunLight });
       treesCrownLayer.deck.setProps({
