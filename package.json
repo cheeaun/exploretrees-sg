@@ -13,7 +13,7 @@
     "tiles": "npm run tiles-important && npm run tiles-other && npm run tiles-join",
     "family": "node scripts/fetch-families",
     "pois": "node scripts/fetch-pois",
-    "start": "parcel index.html 3d/index.html --no-hmr",
+    "start": "parcel index.html 3d/index.html",
     "prebuild": "rm -rf dist",
     "build": "parcel build index.html 3d/index.html --no-scope-hoist",
     "postbuild": "cpy {CNAME,favicon.ico} dist"
