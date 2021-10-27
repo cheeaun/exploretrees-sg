@@ -28,12 +28,20 @@ const familiesSpeciesFetch = fetch(`${DATA_API_ROOT}families-species.json`)
     fColors.push('slategray');
     document.getElementById('legend-family').innerHTML = Object.keys(fColorsMap)
       .map((f, i) => {
-        return `<span class="ib">
+        return `<a href="#family/${f}" class="ib">
       <span class="circle" style="background-color: ${fColorsMap[f].hslStr}" title="${i}"></span>
       ${f}
-    </span>`;
+    </a>`;
       })
       .join('');
+    document.getElementById('legend-family').onclick = (e) => {
+      if (e.target.tagName.toLowerCase() === 'a') {
+        if (e.target.classList.contains('selected')) {
+          e.preventDefault();
+          location.hash = '#family';
+        }
+      }
+    };
   });
 
 const isTouch = 'ontouchstart' in window || navigator.msMaxTouchPoints;
@@ -131,6 +139,9 @@ $modal.onclick = closeLayers;
 
 $layers.onclick = function (e) {
   if (e.target.className.toLowerCase() === 'close') {
+    closeLayers();
+  }
+  if (/family\//i.test(e.target.href)) {
     closeLayers();
   }
 };
@@ -390,6 +401,7 @@ const flyToPosition = (lngLat) => {
 };
 
 (async () => {
+  let currentFamily = null;
   if (renderingMode === 'low') {
     await mapLoaded;
 
@@ -525,13 +537,29 @@ const flyToPosition = (lngLat) => {
           'circle-color': ['match', ['to-string', ['get', 'family']]].concat(
             fColors,
           ),
-          'circle-opacity': ['case', ['to-boolean', ['get', 'family']], 1, 0.5],
-          'circle-radius': [
+          'circle-opacity': () => [
+            'case',
+            ['all', !!currentFamily, ['!=', ['get', 'family'], currentFamily]],
+            16 / 256,
+            ['to-boolean', ['get', 'family']],
+            1,
+            0.5,
+          ],
+          'circle-radius': () => [
             'interpolate',
             ['linear'],
             ['zoom'],
             10,
-            0.5,
+            [
+              'case',
+              [
+                'all',
+                !!currentFamily,
+                ['==', ['get', 'family'], currentFamily],
+              ],
+              2,
+              0.5,
+            ],
             20,
             5,
           ],
@@ -609,8 +637,12 @@ const flyToPosition = (lngLat) => {
     };
 
     window.onhashchange = function () {
-      const hash = location.hash.slice(1);
-      let filter = (hash.match(/^[^/]+/i) || ['type'])[0];
+      const hash = decodeURIComponent(location.hash.slice(1));
+      let filters = hash.trim().split('/');
+      const filter = filters[0] || 'type';
+      const filter2 = filters[1] || null;
+      currentFamily = filter === 'family' ? filter2 : null;
+      console.log({ filters });
       let styles = layerStyles[filter];
       if (!styles) {
         filter = 'type';
@@ -618,7 +650,11 @@ const flyToPosition = (lngLat) => {
       }
       const { paint } = styles;
       for (let name in paint) {
-        map.setPaintProperty('trees', name, paint[name]);
+        map.setPaintProperty(
+          'trees',
+          name,
+          typeof paint[name] === 'function' ? paint[name]() : paint[name],
+        );
       }
       map.setLayoutProperty('trees', 'visibility', 'visible');
       const links = document.querySelectorAll('#layers a');
@@ -626,7 +662,8 @@ const flyToPosition = (lngLat) => {
         const link = links[i];
         link.classList.toggle(
           'selected',
-          link.innerText.toLowerCase() == filter,
+          link.innerText.toLowerCase() == filter ||
+            link.innerText.trim() == currentFamily,
         );
       }
       const legends = document.querySelectorAll('#layers .legend');
@@ -891,6 +928,7 @@ const flyToPosition = (lngLat) => {
           height_est: +height_est,
           age: +age,
           heritage,
+          family,
           familyColor: fColorsMap[family] || null,
         };
       });
@@ -952,11 +990,16 @@ const flyToPosition = (lngLat) => {
         },
       },
       family: {
-        getRadius: 3,
-        getFillColor: ({ familyColor }) =>
-          familyColor
+        getRadius: (d) =>
+          currentFamily && d.family === currentFamily ? 100 : 3,
+        getFillColor: ({ family, familyColor }) => {
+          if (currentFamily && family !== currentFamily) {
+            return colorName2RGB('slategray').concat(16);
+          }
+          return familyColor
             ? familyColor.rgbArr
-            : colorName2RGB('slategray').concat(128),
+            : colorName2RGB('slategray').concat(128);
+        },
       },
     };
 
@@ -1053,8 +1096,11 @@ const flyToPosition = (lngLat) => {
       .length.toLocaleString();
 
     window.onhashchange = function () {
-      const hash = location.hash.slice(1);
-      let filter = (hash.match(/^[^/]+/i) || ['type'])[0];
+      const hash = decodeURIComponent(location.hash.slice(1));
+      let filters = hash.trim().split('/');
+      const filter = filters[0] || 'type';
+      const filter2 = filters[1] || null;
+      currentFamily = filter === 'family' ? filter2 : null;
       let styles = layerStyles[filter];
       if (!styles) {
         filter = 'type';
@@ -1062,14 +1108,18 @@ const flyToPosition = (lngLat) => {
       }
       treesLayer.setProps({
         ...styles,
-        updateTriggers: styles,
+        updateTriggers: {
+          getRadius: hash,
+          getFillColor: hash,
+        },
       });
       const links = document.querySelectorAll('#layers a');
       for (let i = 0; i < links.length; i++) {
         const link = links[i];
         link.classList.toggle(
           'selected',
-          link.innerText.toLowerCase() == filter,
+          link.innerText.toLowerCase() == filter ||
+            link.innerText.trim() == currentFamily,
         );
       }
       const legends = document.querySelectorAll('#layers .legend');

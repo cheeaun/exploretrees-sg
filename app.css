@@ -45,10 +45,10 @@ svg {
 
 .circle {
   display: inline-block;
-  width: 14px;
-  height: 14px;
+  width: 8px;
+  height: 8px;
   border-radius: 123123px;
-  border: 3px solid rgba(0, 0, 0, 0.6);
+  border: 1px solid rgba(0, 0, 0, 0.5);
   vertical-align: middle;
   transition: 0.3s background-color;
 }
@@ -582,8 +582,21 @@ body.modal #card {
   opacity: 0.5;
 }
 
-#legend-family .ib {
-  margin-right: 0.6em;
+#legend-family > a {
+  margin: 1px;
+  text-decoration: none;
+  padding: 0.25em 0.6em;
+  border-radius: 4em;
+}
+#legend-family > a:hover {
+  background-color: rgba(255, 255, 255, 0.5);
+}
+#legend-family > a.selected {
+  color: #000;
+  background-color: #fff;
+}
+#legend-family > a:active {
+  background-color: rgba(255, 255, 255, 0.2);
 }
 
 #rendering-mode {
