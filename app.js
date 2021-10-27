@@ -773,13 +773,14 @@ const flyToPosition = (lngLat) => {
       SunLight,
       LightingEffect,
       ScatterplotLayer,
-      SolidPolygonLayer,
+      // SolidPolygonLayer,
       SimpleMeshLayer,
       SphereGeometry,
+      TruncatedConeGeometry,
       polyline,
       KDBush,
       geokdbush,
-      circle,
+      // circle,
       throttle,
     } = await import('./hq.bundle');
 
@@ -924,6 +925,7 @@ const flyToPosition = (lngLat) => {
           id,
           position,
           // all properties needed for rendering
+          girth,
           girth_size,
           height_est: +height_est,
           age: +age,
@@ -1003,17 +1005,38 @@ const flyToPosition = (lngLat) => {
       },
     };
 
-    const trees3DLayer = new MapboxLayer({
+    const treesTrunkLayer = (window.treesTrunkLayer = new MapboxLayer({
       visible: false,
-      id: 'trees-3d',
-      type: SolidPolygonLayer,
-      getFillColor: (d) =>
-        d.crown
-          ? colorName2RGB('green').concat(100)
-          : colorName2RGB('saddlebrown').concat(128),
-      extruded: true,
-      getElevation: (d) => d.elevation,
-    });
+      id: 'trees-trunk',
+      type: SimpleMeshLayer,
+      mesh: new TruncatedConeGeometry({
+        topRadius: 0.5,
+        bottomRadius: 1.2,
+      }),
+      getColor: [67, 39, 21],
+      getOrientation: [0, 0, 90],
+      getTranslation: (d) => [0, 0, (d.height_est * 0.75) / 2],
+      getScale: (d) => {
+        const girth = parseFloat(
+          (d.girth || '0.5').match(/[\d.]+[^\d.]?$/)[0],
+          10,
+        );
+        const girthScale = girth / 1.5;
+        return [girthScale, d.height_est * 0.75, girthScale];
+      },
+    }));
+
+    // const trees3DLayer = new MapboxLayer({
+    //   visible: false,
+    //   id: 'trees-3d',
+    //   type: SolidPolygonLayer,
+    //   getFillColor: (d) =>
+    //     d.crown
+    //       ? colorName2RGB('green').concat(100)
+    //       : colorName2RGB('saddlebrown').concat(128),
+    //   extruded: true,
+    //   getElevation: (d) => d.elevation,
+    // });
 
     const treesCrownLayer = new MapboxLayer({
       visible: false,
@@ -1030,38 +1053,38 @@ const flyToPosition = (lngLat) => {
       },
     });
 
-    const tree3DCache = new Map();
-    const tree3Dify = (id, d) => {
-      if (tree3DCache.has(id)) return tree3DCache.get(id);
-      const { height_est: height, position } = d;
-      const girth = parseFloat(d.girth.match(/[\d.]+[^\d.]?$/)[0], 10);
-      const steps = 6 + (girth - 0.5) * 2; // girth: from 0.5 to 1.5
-      const trunkRadius = (girth / Math.PI) * 2;
-      const trunkPolygon = circle(position, trunkRadius / 1000, { steps })
-        .geometry.coordinates;
-      const trunk = {
-        polygon: trunkPolygon,
-        elevation: height * 0.75, // let the trunk "goes into" the crown a bit
-      };
-      // const crownRadius = height * .4;
-      // const crownPolygon = circle(position, crownRadius/1000, { steps: steps * 2 }).geometry.coordinates[0];
-      // const crown = {
-      //   crown: true,
-      //   polygon: crownPolygon.map(c => c.concat(height * .5)),
-      //   elevation: height * .5,
-      // };
-      // const polygons = [trunk, crown];
-      const polygons = [trunk];
-      tree3DCache.set(id, polygons);
-      return polygons;
-    };
-    const trees3Dify = (data, metadata) => {
-      const finalData = [];
-      data.forEach((d) => {
-        finalData.push(...tree3Dify(d.id, { ...d, ...metadata[d.id] }));
-      });
-      return finalData;
-    };
+    // const tree3DCache = new Map();
+    // const tree3Dify = (id, d) => {
+    //   if (tree3DCache.has(id)) return tree3DCache.get(id);
+    //   const { height_est: height, position } = d;
+    //   const girth = parseFloat(d.girth.match(/[\d.]+[^\d.]?$/)[0], 10);
+    //   const steps = 6 + (girth - 0.5) * 2; // girth: from 0.5 to 1.5
+    //   const trunkRadius = (girth / Math.PI) * 2;
+    //   const trunkPolygon = circle(position, trunkRadius / 1000, { steps })
+    //     .geometry.coordinates;
+    //   const trunk = {
+    //     polygon: trunkPolygon,
+    //     elevation: height * 0.75, // let the trunk "goes into" the crown a bit
+    //   };
+    //   // const crownRadius = height * .4;
+    //   // const crownPolygon = circle(position, crownRadius/1000, { steps: steps * 2 }).geometry.coordinates[0];
+    //   // const crown = {
+    //   //   crown: true,
+    //   //   polygon: crownPolygon.map(c => c.concat(height * .5)),
+    //   //   elevation: height * .5,
+    //   // };
+    //   // const polygons = [trunk, crown];
+    //   const polygons = [trunk];
+    //   tree3DCache.set(id, polygons);
+    //   return polygons;
+    // };
+    // const trees3Dify = (data, metadata) => {
+    //   const finalData = [];
+    //   data.forEach((d) => {
+    //     finalData.push(...tree3Dify(d.id, { ...d, ...metadata[d.id] }));
+    //   });
+    //   return finalData;
+    // };
 
     await mapLoaded;
 
@@ -1238,8 +1261,10 @@ const flyToPosition = (lngLat) => {
       return true;
     });
 
-    map.addLayer(trees3DLayer, labelLayerId);
-    map.setLayerZoomRange('trees-3d', 16, 20.5);
+    // map.addLayer(trees3DLayer, labelLayerId);
+    // map.setLayerZoomRange('trees-3d', 16, 20.5);
+    map.addLayer(treesTrunkLayer, labelLayerId);
+    map.setLayerZoomRange('trees-trunk', 16, 20.5);
     map.addLayer(treesCrownLayer, labelLayerId);
     map.setLayerZoomRange('trees-crown', 16, 20.5);
 
@@ -1318,9 +1343,13 @@ const flyToPosition = (lngLat) => {
             results = geokdbush.around(index3D, center.lng, center.lat, 5000);
           }
           console.log(`3D trees count: ${results.length}`);
-          trees3DLayer.setProps({
+          // trees3DLayer.setProps({
+          //   visible: true,
+          //   data: trees3Dify(results, metadata),
+          // });
+          treesTrunkLayer.setProps({
             visible: true,
-            data: trees3Dify(results, metadata),
+            data: results,
           });
           treesCrownLayer.setProps({
             visible: true,
@@ -1331,7 +1360,10 @@ const flyToPosition = (lngLat) => {
           });
           if (!selectedTree) hideHighlightTree();
         } else {
-          trees3DLayer.setProps({
+          // trees3DLayer.setProps({
+          //   visible: false,
+          // });
+          treesTrunkLayer.setProps({
             visible: false,
           });
           treesCrownLayer.setProps({
