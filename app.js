@@ -178,21 +178,23 @@ const geolocateControl = new mapboxgl.GeolocateControl({
 map.addControl(geolocateControl);
 map.addControl(new mapboxgl.NavigationControl());
 
-let orientationGranted = false;
-geolocateControl._geolocateButton.addEventListener('click', (e) => {
-  if (window.DeviceOrientationEvent && !orientationGranted) {
-    if (typeof DeviceOrientationEvent.requestPermission === 'function') {
-      DeviceOrientationEvent.requestPermission()
-        .then(function (permissionState) {
-          if (permissionState === 'granted') {
-            console.log('granted');
-            orientationGranted = true;
-          }
-        })
-        .catch((e) => {});
+setTimeout(() => {
+  let orientationGranted = false;
+  geolocateControl._geolocateButton.addEventListener('click', (e) => {
+    if (window.DeviceOrientationEvent && !orientationGranted) {
+      if (typeof DeviceOrientationEvent.requestPermission === 'function') {
+        DeviceOrientationEvent.requestPermission()
+          .then(function (permissionState) {
+            if (permissionState === 'granted') {
+              console.log('granted');
+              orientationGranted = true;
+            }
+          })
+          .catch((e) => {});
+      }
     }
-  }
-});
+  });
+}, 1);
 
 let labelLayerId;
 let mapLoaded = new Promise((res, rej) => map.once('load', res));
