@@ -172,16 +172,30 @@ if (renderingMode === 'low') {
   map.touchZoomRotate.disableRotation();
   // map.on('error', (e) => alert(e));
 }
-map.addControl(
-  new mapboxgl.GeolocateControl({
-    positionOptions: {
-      enableHighAccuracy: true,
-    },
-    showUserHeading: true,
-    trackUserLocation: true,
-  }),
-);
+const geolocateControl = new mapboxgl.GeolocateControl({
+  positionOptions: {
+    enableHighAccuracy: true,
+  },
+  showUserHeading: true,
+  trackUserLocation: true,
+});
+map.addControl(geolocateControl);
 map.addControl(new mapboxgl.NavigationControl());
+
+let orientationGranted = false;
+geolocateControl._geolocateButton.addEventListener('click', (e) => {
+  if (window.DeviceOrientationEvent && !orientationGranted) {
+    if (typeof DeviceOrientationEvent.requestPermission === 'function') {
+      DeviceOrientationEvent.requestPermission()
+        .then(function (permissionState) {
+          if (permissionState === 'granted') {
+            console.log('granted');
+          }
+        })
+        .catch((e) => {});
+    }
+  }
+});
 
 let labelLayerId;
 let mapLoaded = new Promise((res, rej) => map.once('load', res));
