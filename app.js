@@ -186,13 +186,10 @@ geolocateControl._geolocateButton.addEventListener('click', (e) => {
         .then(function (permissionState) {
           if (permissionState === 'granted') {
             console.log('granted');
-            alert('Device orientation granted');
             orientationGranted = true;
           }
         })
-        .catch((e) => {
-          alert('Device orientation not granted');
-        });
+        .catch((e) => {});
     }
   }
 });
