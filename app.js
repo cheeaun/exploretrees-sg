@@ -162,11 +162,7 @@ const map = (window._map = new mapboxgl.Map({
   attributionControl: false, // Attribution is inside Layers modal
   bounds: mapBounds,
   // maxTileCacheSize: renderingMode === 'low' ? 0 : null,
-  pitchWithRotate: renderingMode === 'high',
-  dragRotate: renderingMode === 'high',
-  keyboard: renderingMode === 'high',
   fadeDuration: renderingMode === 'high' ? 300 : 0,
-  touchPitch: renderingMode === 'high',
 }));
 if (renderingMode === 'low') {
   map.touchZoomRotate.disableRotation();
