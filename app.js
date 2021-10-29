@@ -1326,7 +1326,7 @@ const flyToPosition = (lngLat) => {
       });
       const sunLight = new SunLight({
         timestamp,
-        intensity: phaseColor === 'dark' ? 2 : 2,
+        intensity: phaseColor === 'dark' ? 1 : 2,
       });
       const lightingEffect = new LightingEffect({ ambientLight, sunLight });
       treesCrownLayer.deck.setProps({
