@@ -581,6 +581,9 @@ body.modal #card {
 #card .footer-buttons a:active {
   opacity: 0.5;
 }
+#card .footer-buttons a > * {
+  pointer-events: none;
+}
 
 #legend-family > a {
   margin: 1px;
