@@ -34,7 +34,7 @@
     "@turf/turf": "~6.5.0",
     "autoprefixer": "~10.3.7",
     "cpy-cli": "~3.1.1",
-    "got": "~11.8.2",
+    "got": "~11.8.5",
     "parcel": "~2.0.0",
     "postcss-import-url": "~7.0.0",
     "postcss-modules": "~4.2.2"
